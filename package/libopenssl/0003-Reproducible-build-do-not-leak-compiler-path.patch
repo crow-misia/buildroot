@@ -1,26 +1,26 @@
-From 875fcad2ad84877763cba86c1265b57679b878b0 Mon Sep 17 00:00:00 2001
+From d59673c3694e58a4f1df1b85a5fed8b8b29428b3 Mon Sep 17 00:00:00 2001
 From: Peter Seiderer <ps.report@gmx.net>
 Date: Tue, 24 Oct 2017 16:58:32 +0200
 Subject: [PATCH] Reproducible build: do not leak compiler path
 
 Signed-off-by: Peter Seiderer <ps.report@gmx.net>
 ---
- crypto/Makefile | 2 +-
+ crypto/build.info | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/crypto/Makefile b/crypto/Makefile
-index 7869996..7e63291 100644
---- a/crypto/Makefile
-+++ b/crypto/Makefile
-@@ -55,7 +55,7 @@ top:
- all: shared
+diff --git a/crypto/build.info b/crypto/build.info
+index 916d24f..a5c4834 100644
+--- a/crypto/build.info
++++ b/crypto/build.info
+@@ -11,7 +11,7 @@ EXTRA=  ../ms/uplink-x86.pl ../ms/uplink.c ../ms/applink.c \
+         ppccpuid.pl pariscid.pl alphacpuid.pl arm64cpuid.pl armv4cpuid.pl
  
- buildinf.h: ../Makefile
--	$(PERL) $(TOP)/util/mkbuildinf.pl "$(CC) $(CFLAGS)" "$(PLATFORM)" >buildinf.h
-+	$(PERL) $(TOP)/util/mkbuildinf.pl "$$(basename $(CC)) $(CFLAGS)" "$(PLATFORM)" >buildinf.h
+ DEPEND[cversion.o]=buildinf.h
+-GENERATE[buildinf.h]=../util/mkbuildinf.pl "$(CC) $(CFLAGS_Q)" "$(PLATFORM)"
++GENERATE[buildinf.h]=../util/mkbuildinf.pl "$$(basename $(CC)) $(CFLAGS_Q)" "$(PLATFORM)"
+ DEPEND[buildinf.h]=../configdata.pm
  
- x86cpuid.s:	x86cpuid.pl perlasm/x86asm.pl
- 	$(PERL) x86cpuid.pl $(PERLASM_SCHEME) $(CFLAGS) $(PROCESSOR) > $@
+ GENERATE[uplink-x86.s]=../ms/uplink-x86.pl $(PERLASM_SCHEME)
 -- 
-2.11.0
+2.16.3
 
