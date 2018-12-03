@@ -1,0 +1,45 @@
+From c2decf7174d52bc4d02e1d0430f08e7292108c78 Mon Sep 17 00:00:00 2001
+From: Zenichi Amano <crow.misia@gmail.com>
+Date: Tue, 4 Dec 2018 02:02:08 +0900
+Subject: [PATCH] fix unix-Makefile.tmpl
+
+---
+ Configurations/unix-Makefile.tmpl | 24 +++++++++++-------------
+ 1 file changed, 11 insertions(+), 13 deletions(-)
+
+diff --git a/Configurations/unix-Makefile.tmpl b/Configurations/unix-Makefile.tmpl
+index 034d93e653..66507d7c13 100644
+--- a/Configurations/unix-Makefile.tmpl
++++ b/Configurations/unix-Makefile.tmpl
+@@ -306,19 +306,15 @@ distclean: clean
+ # concatenate only if that is true.
+ depend:
+ 	@: {- output_off() if $disabled{makedepend}; "" -}
+-	@if egrep "^# DO NOT DELETE THIS LINE" Makefile >/dev/null && [ -z "`find $(DEPS) -newer Makefile 2>/dev/null; exit 0`" ]; then :; else \
+-	  ( $(PERL) -pe 'exit 0 if /^# DO NOT DELETE THIS LINE.*/' < Makefile; \
+-	    echo '# DO NOT DELETE THIS LINE -- make depend depends on it.'; \
+-	    echo; \
+-	    for f in $(DEPS); do \
+-	      if [ -f $$f ]; then cat $$f; fi; \
+-	    done ) > Makefile.new; \
+-	  if cmp Makefile.new Makefile >/dev/null 2>&1; then \
+-	    rm -f Makefile.new; \
+-	  else \
+-	    mv -f Makefile.new Makefile; \
+-	  fi; \
+-	fi
++	@( sed -e '/^# DO NOT DELETE THIS LINE.*/,$$d' < Makefile; \
++	  echo '# DO NOT DELETE THIS LINE -- make depend depends on it.'; \
++	  echo; \
++	  for d in $(DEPS); do \
++	    if [ -f $$d ]; then cat $$d; fi; \
++	  done ) > Makefile.new; \
++	if ! cmp Makefile.new Makefile ; then \
++		cp -f Makefile.new Makefile; \
++	fi
+ 	@: {- output_on() if $disabled{makedepend}; "" -}
+ 
+ # Install helper targets #############################################
+-- 
+2.19.2
+
