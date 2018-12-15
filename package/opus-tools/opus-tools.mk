@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-OPUS_TOOLS_VERSION = 0.1.10
+OPUS_TOOLS_VERSION = 0.2
 OPUS_TOOLS_SITE = https://downloads.xiph.org/releases/opus
 OPUS_TOOLS_LICENSE = BSD-2-Clause, GPL-2.0 (opusinfo)
 OPUS_TOOLS_LICENSE_FILES = COPYING
