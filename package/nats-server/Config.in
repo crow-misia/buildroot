@@ -1,0 +1,6 @@
+config BR2_PACKAGE_NATS_SERVER
+	bool "nats-server"
+	default false
+	depends on BR2_PACKAGE_HOST_GO_TARGET_ARCH_SUPPORTS
+	help
+		High-Performance server for NATS, the cloud native messaging system.
