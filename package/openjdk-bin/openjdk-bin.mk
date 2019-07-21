@@ -20,6 +20,9 @@ HOST_OPENJDK_BIN_LICENSE_FILES = legal/java.prefs/LICENSE legal/java.prefs/ASSEM
 define HOST_OPENJDK_BIN_INSTALL_CMDS
 	cp -dpfr $(@D)/bin/* $(HOST_DIR)/bin/
 	cp -dpfr $(@D)/lib/* $(HOST_DIR)/lib/
+	cp -dpfr $(@D)/include/* $(HOST_DIR)/include/
+	mkdir -p $(HOST_DIR)/conf
+	cp -dpfr $(@D)/conf/* $(HOST_DIR)/conf/
 	$(RM) -f $(HOST_DIR)/bin/unpack200
 endef
 
