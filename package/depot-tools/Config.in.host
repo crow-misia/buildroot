@@ -1,0 +1,6 @@
+config BR2_PACKAGE_HOST_DEPOT_TOOLS
+	bool "host depot_tools"
+	help
+	  depot_tools - A collection of tools for dealing with Chromium development.
+
+	  https://commondatastorage.googleapis.com/chrome-infra-docs/flat/depot_tools/docs/html/depot_tools.html
