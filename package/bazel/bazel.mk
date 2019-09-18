@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-BAZEL_VERSION = 0.24.1
+BAZEL_VERSION = 0.29.1
 BAZEL_SITE = https://github.com/bazelbuild/bazel/releases/download/$(BAZEL_VERSION)
 BAZEL_SOURCE = bazel-$(BAZEL_VERSION)-dist.zip
 

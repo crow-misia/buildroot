@@ -1,4 +1,5 @@
 # https://github.com/bazelbuild/bazel/releases
+sha256 872a52cff208676e1169b3e1cae71b1fe572c4109cbd66eab107d8607c378de5  bazel-0.29.1-dist.zip
 sha256 2cea463d611f5255d2f3d41c8de5dcc0961adccb39cf0ac036f07070ba720314  bazel-0.28.1-dist.zip
 sha256 26ad8cdadd413b8432cf46d9fc3801e8db85d9922f85dd8a7f5a92fec876557f  bazel-0.28.0-dist.zip
 sha256 5e1bf2b48e54eb7e518430667d29aef53695d6dd7c718665a52131ab27aadab2  bazel-0.27.2-dist.zip
