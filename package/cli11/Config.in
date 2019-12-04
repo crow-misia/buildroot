@@ -1,0 +1,5 @@
+config BR2_PACKAGE_CLI11
+	bool "cli11"
+	help
+	  CLI11 is a command line parser for C++11 and beyond that provides
+	  a rich feature set with a simple and intuitive interface.
