@@ -1903,6 +1903,7 @@ menu "Miscellaneous"
 	source "package/shared-mime-info/Config.in"
 	source "package/sunwait/Config.in"
 	source "package/taskd/Config.in"
+	source "package/tensorflow-lite/Config.in"
 	source "package/wine/Config.in"
 	source "package/xutil_util-macros/Config.in"
 endmenu
