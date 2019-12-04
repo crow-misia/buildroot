@@ -1,0 +1,11 @@
+config BR2_PACKAGE_LIBWEBRTC
+	bool "libwebrtc"
+	depends on BR2_USE_WCHAR
+	depends on BR2_TOOLCHAIN_HAS_THREADS
+	depends on !BR2_STATIC_LIBS
+	depends on BR2_USE_MMU # fork()
+	select BR2_PACKAGE_HOST_DEPOT_TOOLS
+	help
+	  WebRTC is a free, open project that provides browsers and mobile applications with Real-Time Communications (RTC) capabilities via simple APIs. The WebRTC components have been optimized to best serve this purpose.
+
+	  https://webrtc.org/
