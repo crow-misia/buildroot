@@ -1,0 +1,49 @@
+From b5f68fbd3068f94158b91750bea35058f3713ef0 Mon Sep 17 00:00:00 2001
+From: Zenichi Amano <crow.misia@gmail.com>
+Date: Sat, 23 Nov 2019 22:21:41 +0900
+Subject: [PATCH 8/8] add use flag for H264
+
+---
+ src/CMakeLists.txt | 20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
+
+diff --git a/src/CMakeLists.txt b/src/CMakeLists.txt
+index bbb36a8..9d153e6 100644
+--- a/src/CMakeLists.txt
++++ b/src/CMakeLists.txt
+@@ -55,6 +55,25 @@ if(USE_ROS)
+   )
+ endif()
+ 
++option(USE_H264 "use H264" OFF)
++option(USE_MMAL_ENCODER "use MMAL Encoder" OFF)
++option(USE_JETSON_ENCODER "use Jetson Encoder" OFF)
++if(USE_H264)
++  add_definitions(-DUSE_H264)
++  if (USE_MMAL_ENCODER)
++    list(APPEND SOURCES
++      hwenc_mmal/mmal_h264_encoder.cpp
++      v4l2_video_capturer/v4l2_video_capturer.cpp
++    )
++  endif()
++  if (USE_JETSON_ENCODER)
++    list(APPEND SOURCES
++      hwenc_jetson/jetson_h264_encoder.cpp
++      v4l2_video_capturer/v4l2_video_capturer.cpp
++    ) 
++  endif()
++endif()
++
+ option(USE_SDL2 "use SDL2" ON)
+ if(USE_SDL2)
+   add_definitions(-DUSE_SDL2)
+@@ -67,5 +86,6 @@ if(USE_GOOGLE_STUN_SERVER)
+   add_definitions(-DUSE_GOOGLE_STUN_SERVER)
+ endif()
+ 
++list(REMOVE_DUPLICATES SOURCES)
+ add_executable(momo ${SOURCES})
+ target_link_libraries(momo ${STATIC_LIBRARIES})
+-- 
+2.23.0
+

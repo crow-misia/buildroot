@@ -1,0 +1,30 @@
+menuconfig BR2_PACKAGE_MOMO
+	bool "momo"
+	depends on BR2_TOOLCHAIN_HAS_THREADS
+	select BR2_PACKAGE_BOOST
+	select BR2_PACKAGE_BOOST_FILESYSTEM
+	select BR2_PACKAGE_BOOST_SYSTEM
+	select BR2_PACKAGE_CLI11
+	select BR2_PACKAGE_JSON_FOR_MODERN_CPP
+	select BR2_PACKAGE_LIBWEBRTC
+	help
+	  WebRTC Native Client Momo
+
+	  https://github.com/shiguredo/momo
+
+if BR2_PACKAGE_MOMO
+
+config BR2_PACKAGE_MOMO_USE_SDL2
+	bool "momo-use-sdl2"
+	default y
+	select BR2_PACKAGE_SDL2
+	help
+	  use SDL2
+
+config BR2_PACKAGE_MOMO_USE_GOOGLE_STUN_SERVER
+	bool "momo-use-google-stun-server"
+	default y
+	help
+	  use Google STUN Server
+
+endif

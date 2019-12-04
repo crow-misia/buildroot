@@ -1,0 +1,125 @@
+From 48fa0c6a583e183c7f0d596ff22918802cea9de0 Mon Sep 17 00:00:00 2001
+From: Zenichi Amano <crow.misia@gmail.com>
+Date: Wed, 20 Nov 2019 06:35:16 +0900
+Subject: [PATCH 4/8] add use flag for SDL2
+
+---
+ src/CMakeLists.txt        | 67 ++++++++++++++++++++++++---------------
+ src/connection_settings.h |  2 ++
+ src/util.cpp              |  2 ++
+ 3 files changed, 45 insertions(+), 26 deletions(-)
+
+diff --git a/src/CMakeLists.txt b/src/CMakeLists.txt
+index b7c860e..80032cd 100644
+--- a/src/CMakeLists.txt
++++ b/src/CMakeLists.txt
+@@ -4,6 +4,39 @@ set(CMAKE_C_FLAGS "-Wno-macro-redefined -fno-lto -pthread")
+ set(CMAKE_C_FLAGS_DEBUG "-g3 -O0 -pg")
+ set(CMAKE_C_FLAGS_RELEASE "-DNEBUG")
+ 
++set(STATIC_LIBRARIES
++  pthread
++  webrtc
++  dl
++  boost_filesystem
++  boringssl
++)
++
++set(SOURCES
++  main.cpp
++  signal_listener.cpp
++  util.cpp
++  watchdog.cpp
++  ayame/ayame_server.cpp
++  ayame/ayame_websocket_client.cpp
++  p2p/p2p_connection.cpp
++  p2p/p2p_server.cpp
++  p2p/p2p_session.cpp
++  p2p/p2p_websocket_session.cpp
++  rtc/connection.cpp
++  rtc/device_video_capturer.cpp
++  rtc/h264_format.cpp
++  rtc/hw_video_encoder_factory.cpp
++  rtc/manager.cpp
++  rtc/native_buffer.cpp
++  rtc/observer.cpp
++  rtc/scalable_track_source.cpp
++  sora/sora_server.cpp
++  sora/sora_session.cpp
++  sora/sora_websocket_client.cpp
++  ws/websocket.cpp
++)
++
+ add_definitions(-DWEBRTC_POSIX)
+ add_definitions(-DOPENSSL_IS_BORINGSSL)
+ 
+@@ -12,30 +45,12 @@ if(WEBRTC_USE_X11)
+   add_definitions(-DWEBRTC_USE_X11)
+ endif()
+ 
+-add_executable(momo
+-	main.cpp
+-	signal_listener.cpp
+-	util.cpp
+-	watchdog.cpp
+-	ayame/ayame_server.cpp
+-	ayame/ayame_websocket_client.cpp
+-	p2p/p2p_connection.cpp
+-	p2p/p2p_server.cpp
+-	p2p/p2p_session.cpp
+-	p2p/p2p_websocket_session.cpp
+-	rtc/connection.cpp
+-	rtc/device_video_capturer.cpp
+-	rtc/h264_format.cpp
+-	rtc/hw_video_encoder_factory.cpp
+-	rtc/manager.cpp
+-	rtc/native_buffer.cpp
+-	rtc/observer.cpp
+-	rtc/scalable_track_source.cpp
+-	sdl_renderer/sdl_renderer.cpp
+-	sora/sora_server.cpp
+-	sora/sora_session.cpp
+-	sora/sora_websocket_client.cpp
+-	ws/websocket.cpp
+-)
+-target_link_libraries(momo pthread webrtc dl boost_filesystem boost_system boringssl SDL2)
++option(USE_SDL2 "use SDL2" ON)
++if(USE_SDL2)
++  add_definitions(-DUSE_SDL2)
++  list(APPEND STATIC_LIBRARIES SDL2)
++  list(APPEND SOURCES sdl_renderer/sdl_renderer.cpp)
++endif()
+ 
++add_executable(momo ${SOURCES})
++target_link_libraries(momo ${STATIC_LIBRARIES})
+diff --git a/src/connection_settings.h b/src/connection_settings.h
+index 7fccff3..0bce17f 100644
+--- a/src/connection_settings.h
++++ b/src/connection_settings.h
+@@ -30,7 +30,9 @@ struct ConnectionSettings {
+   bool fixed_resolution = false;
+   std::string priority = "BALANCE";
+   int port = 8080;
++#if USE_SDL2
+   bool use_sdl = false;
++#endif
+   bool show_me = false;
+   int window_width = 640;
+   int window_height = 480;
+diff --git a/src/util.cpp b/src/util.cpp
+index 181bfff..cdaf69f 100644
+--- a/src/util.cpp
++++ b/src/util.cpp
+@@ -192,7 +192,9 @@ void Util::parseArgs(int argc,
+               "優先設定 (Experimental)");
+   app.add_option("--port", cs.port, "ポート番号(デフォルト:8080)")
+       ->check(CLI::Range(0, 65535));
++#if USE_SDL2
+   app.add_flag("--use-sdl", cs.use_sdl, "SDLを使い映像を表示する");
++#endif
+   app.add_flag("--show-me", cs.show_me, "自分のカメラも表示する");
+   app.add_option("--window-width", cs.window_width, "映像を表示するウィンドウの横幅")
+       ->check(CLI::Range(180, 16384));
+-- 
+2.23.0
+

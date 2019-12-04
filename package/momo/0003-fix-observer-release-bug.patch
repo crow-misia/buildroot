@@ -1,0 +1,30 @@
+From 3e21616c7f2dfc68a7d4e34b59ac1c590a342490 Mon Sep 17 00:00:00 2001
+From: Zenichi Amano <crow.misia@gmail.com>
+Date: Wed, 20 Nov 2019 06:30:18 +0900
+Subject: [PATCH 3/8] fix observer release bug
+
+---
+ src/rtc/connection.cpp | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
+
+diff --git a/src/rtc/connection.cpp b/src/rtc/connection.cpp
+index ae7980d..a8aaf00 100644
+--- a/src/rtc/connection.cpp
++++ b/src/rtc/connection.cpp
+@@ -29,10 +29,9 @@ void RTCConnection::setOffer(const std::string sdp) {
+                       << "\nline: " << error.line.c_str();
+     return;
+   }
+-  _connection->SetRemoteDescription(
+-      SetSessionDescriptionObserver::Create(session_description->GetType(),
+-                                            _sender),
+-      session_description.release());
++  SetSessionDescriptionObserver *observer = SetSessionDescriptionObserver::Create(session_description->GetType(),
++					_sender);
++  _connection->SetRemoteDescription(observer, session_description.release());
+ }
+ 
+ void RTCConnection::createAnswer() {
+-- 
+2.23.0
+

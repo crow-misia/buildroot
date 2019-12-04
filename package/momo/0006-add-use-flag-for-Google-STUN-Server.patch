@@ -1,0 +1,64 @@
+From 8bdcc8398ebd88020a0f1c385f9323eb5f6e8cb8 Mon Sep 17 00:00:00 2001
+From: Zenichi Amano <crow.misia@gmail.com>
+Date: Sat, 23 Nov 2019 21:32:08 +0900
+Subject: [PATCH 6/8] add use flag for Google STUN Server
+
+---
+ src/CMakeLists.txt                   | 5 +++++
+ src/ayame/ayame_websocket_client.cpp | 2 ++
+ src/p2p/p2p_connection.cpp           | 2 ++
+ 3 files changed, 9 insertions(+)
+
+diff --git a/src/CMakeLists.txt b/src/CMakeLists.txt
+index 80032cd..5f2d520 100644
+--- a/src/CMakeLists.txt
++++ b/src/CMakeLists.txt
+@@ -52,5 +52,10 @@ if(USE_SDL2)
+   list(APPEND SOURCES sdl_renderer/sdl_renderer.cpp)
+ endif()
+ 
++option(USE_GOOGLE_STUN_SERVER "use Google STUN Server" ON)
++if(USE_GOOGLE_STUN_SERVER)
++  add_definitions(-DUSE_GOOGLE_STUN_SERVER)
++endif()
++
+ add_executable(momo ${SOURCES})
+ target_link_libraries(momo ${STATIC_LIBRARIES})
+diff --git a/src/ayame/ayame_websocket_client.cpp b/src/ayame/ayame_websocket_client.cpp
+index 99ba845..e107b08 100644
+--- a/src/ayame/ayame_websocket_client.cpp
++++ b/src/ayame/ayame_websocket_client.cpp
+@@ -262,12 +262,14 @@ void AyameWebsocketClient::setIceServersFromConfig(json json_message) {
+       }
+     }
+   }
++#if USE_GOOGLE_STUN_SERVER
+   if (ice_servers_.empty()) {
+     // accept 時に iceServers が返却されてこなかった場合 google の stun server を用いる
+     webrtc::PeerConnectionInterface::IceServer ice_server;
+     ice_server.uri = "stun:stun.l.google.com:19302";
+     ice_servers_.push_back(ice_server);
+   }
++#endif
+ }
+ 
+ void AyameWebsocketClient::createPeerConnection() {
+diff --git a/src/p2p/p2p_connection.cpp b/src/p2p/p2p_connection.cpp
+index 7d859dc..cf25798 100644
+--- a/src/p2p/p2p_connection.cpp
++++ b/src/p2p/p2p_connection.cpp
+@@ -12,9 +12,11 @@ P2PConnection::P2PConnection(RTCManager* rtc_manager,
+     : _send(send) {
+   webrtc::PeerConnectionInterface::RTCConfiguration rtc_config;
+   webrtc::PeerConnectionInterface::IceServers servers;
++#if USE_GOOGLE_STUN_SERVER
+   webrtc::PeerConnectionInterface::IceServer ice_server;
+   ice_server.uri = "stun:stun.l.google.com:19302";
+   servers.push_back(ice_server);
++#endif
+   rtc_config.servers = servers;
+   _connection = rtc_manager->createConnection(rtc_config, this);
+ }
+-- 
+2.23.0
+

@@ -1,0 +1,30 @@
+From 2799a72faed3640062e6b463d2e739238e7d3f73 Mon Sep 17 00:00:00 2001
+From: Zenichi Amano <z-amano@minori-sol.jp>
+Date: Wed, 20 Nov 2019 14:36:07 +0900
+Subject: [PATCH 5/8] use always platform default device
+
+---
+ src/rtc/manager.cpp | 5 -----
+ 1 file changed, 5 deletions(-)
+
+diff --git a/src/rtc/manager.cpp b/src/rtc/manager.cpp
+index 1566471..4790122 100644
+--- a/src/rtc/manager.cpp
++++ b/src/rtc/manager.cpp
+@@ -56,13 +56,8 @@ RTCManager::RTCManager(
+   _signalingThread = rtc::Thread::Create();
+   _signalingThread->Start();
+ 
+-#if __linux__
+-  webrtc::AudioDeviceModule::AudioLayer audio_layer =
+-      webrtc::AudioDeviceModule::kLinuxAlsaAudio;
+-#else
+   webrtc::AudioDeviceModule::AudioLayer audio_layer =
+       webrtc::AudioDeviceModule::kPlatformDefaultAudio;
+-#endif
+   if (_conn_settings.no_audio) {
+     audio_layer = webrtc::AudioDeviceModule::kDummyAudio;
+   }
+-- 
+2.23.0
+

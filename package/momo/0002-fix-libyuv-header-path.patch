@@ -1,0 +1,55 @@
+From e6425a28db0d7b5207674056cafe2a2d1b1d37c3 Mon Sep 17 00:00:00 2001
+From: Zenichi Amano <crow.misia@gmail.com>
+Date: Wed, 20 Nov 2019 06:30:03 +0900
+Subject: [PATCH 2/8] fix libyuv header path
+
+---
+ src/rtc/native_buffer.cpp                       | 2 +-
+ src/sdl_renderer/sdl_renderer.cpp               | 4 ++--
+ src/v4l2_video_capturer/v4l2_video_capturer.cpp | 2 +-
+ 3 files changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/src/rtc/native_buffer.cpp b/src/rtc/native_buffer.cpp
+index b97b84b..edbd9f3 100644
+--- a/src/rtc/native_buffer.cpp
++++ b/src/rtc/native_buffer.cpp
+@@ -2,7 +2,7 @@
+ 
+ #include "api/video/i420_buffer.h"
+ #include "rtc_base/checks.h"
+-#include "third_party/libyuv/include/libyuv.h"
++#include "libyuv.h"
+ 
+ static const int kBufferAlignment = 64;
+ 
+diff --git a/src/sdl_renderer/sdl_renderer.cpp b/src/sdl_renderer/sdl_renderer.cpp
+index a142c8c..2be23eb 100644
+--- a/src/sdl_renderer/sdl_renderer.cpp
++++ b/src/sdl_renderer/sdl_renderer.cpp
+@@ -5,8 +5,8 @@
+ 
+ #include "api/video/i420_buffer.h"
+ #include "rtc_base/logging.h"
+-#include "third_party/libyuv/include/libyuv/video_common.h"
+-#include "third_party/libyuv/include/libyuv/convert_from.h"
++#include "libyuv/video_common.h"
++#include "libyuv/convert_from.h"
+ 
+ 
+ #define STD_ASPECT 1.33
+diff --git a/src/v4l2_video_capturer/v4l2_video_capturer.cpp b/src/v4l2_video_capturer/v4l2_video_capturer.cpp
+index 667e7a8..53f3002 100644
+--- a/src/v4l2_video_capturer/v4l2_video_capturer.cpp
++++ b/src/v4l2_video_capturer/v4l2_video_capturer.cpp
+@@ -30,7 +30,7 @@
+ #include "modules/video_capture/video_capture_factory.h"
+ #include "rtc_base/logging.h"
+ #include "rtc_base/ref_counted_object.h"
+-#include "third_party/libyuv/include/libyuv.h"
++#include "libyuv.h"
+ 
+ #include "rtc/native_buffer.h"
+ 
+-- 
+2.23.0
+

@@ -1,0 +1,33 @@
+From b7d363401597eb3a5c810d98116a2593fbfcb6b5 Mon Sep 17 00:00:00 2001
+From: Zenichi Amano <crow.misia@gmail.com>
+Date: Sat, 23 Nov 2019 22:13:09 +0900
+Subject: [PATCH 7/8] add use flag for ROS
+
+---
+ src/CMakeLists.txt | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
+
+diff --git a/src/CMakeLists.txt b/src/CMakeLists.txt
+index 5f2d520..bbb36a8 100644
+--- a/src/CMakeLists.txt
++++ b/src/CMakeLists.txt
+@@ -45,6 +45,16 @@ if(WEBRTC_USE_X11)
+   add_definitions(-DWEBRTC_USE_X11)
+ endif()
+ 
++option(USE_ROS "use ROS" OFF)
++if(USE_ROS)
++  add_definitions(-DUSE_X11)
++  list(APPEND SOURCES
++    ros/ros_audio_device.cpp
++    ros/ros_audio_device_module.cpp
++    ros/ros_video_capture.cpp
++  )
++endif()
++
+ option(USE_SDL2 "use SDL2" ON)
+ if(USE_SDL2)
+   add_definitions(-DUSE_SDL2)
+-- 
+2.23.0
+
