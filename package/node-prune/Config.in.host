@@ -1,0 +1,9 @@
+config BR2_PACKAGE_HOST_NODE_PRUNE
+	bool "host node-prune"
+	default true
+	depends on BR2_PACKAGE_HOST_GO_ARCH_SUPPORTS
+	depends on BR2_PACKAGE_HOST_GO_CGO_LINKING_SUPPORTS
+	depends on BR2_PACKAGE_NODEJS
+	help
+		node-prune is a small tool to prune unnecessary files from ./node_modules, such as markdown,
+		typescript source files, and so on. Primarily built for Up which lets you deploy serverless web applications in seconds.
