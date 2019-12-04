@@ -1,5 +1,5 @@
-# From https://github.com/AdoptOpenJDK/openjdk12-binaries/releases
-sha256  1202f536984c28d68681d51207a84b6c76e5998579132d3fe1b8085aa6a5f21e	OpenJDK12U-jdk_x64_linux_hotspot_12.0.2_10.tar.gz
+# From https://github.com/AdoptOpenJDK/openjdk13-binaries/releases
+sha256  2226366d7dffb3eb4ec3d14101f4ddb4259195aa43bb319a93810447b8384930	OpenJDK13U-jdk_x64_linux_hotspot_13.0.1_9.tar.gz
 
 # Locally calculated
 sha256	4b9abebc4338048a7c2dc184e9f800deb349366bdf28eb23c2677a77b4c87726	legal/java.prefs/LICENSE
