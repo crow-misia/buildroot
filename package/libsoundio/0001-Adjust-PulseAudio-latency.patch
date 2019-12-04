@@ -1,0 +1,35 @@
+From b810bf2e9c4afc822c4843322cd08f7b36668109 Mon Sep 17 00:00:00 2001
+From: Atsushi Eno <atsushieno@gmail.com>
+Date: Tue, 14 Aug 2018 15:18:52 +0800
+Subject: [PATCH] Adjust PulseAudio latency.
+
+This should fix https://github.com/andrewrk/libsoundio/issues/149
+---
+ src/pulseaudio.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/src/pulseaudio.c b/src/pulseaudio.c
+index d594c3b..7fb09d5 100644
+--- a/src/pulseaudio.c
++++ b/src/pulseaudio.c
+@@ -704,7 +704,7 @@ static int outstream_open_pa(struct SoundIoPrivate *si, struct SoundIoOutStreamP
+     }
+ 
+     pa_stream_flags_t flags = (pa_stream_flags_t)(PA_STREAM_START_CORKED | PA_STREAM_AUTO_TIMING_UPDATE |
+-            PA_STREAM_INTERPOLATE_TIMING);
++            PA_STREAM_INTERPOLATE_TIMING | PA_STREAM_ADJUST_LATENCY);
+ 
+     int err = pa_stream_connect_playback(ospa->stream,
+             outstream->device->id, &ospa->buffer_attr,
+@@ -941,7 +941,7 @@ static int instream_start_pa(struct SoundIoPrivate *si, struct SoundIoInStreamPr
+     struct SoundIoPulseAudio *sipa = &si->backend_data.pulseaudio;
+     pa_threaded_mainloop_lock(sipa->main_loop);
+ 
+-    pa_stream_flags_t flags = (pa_stream_flags_t)(PA_STREAM_AUTO_TIMING_UPDATE | PA_STREAM_INTERPOLATE_TIMING);
++    pa_stream_flags_t flags = (pa_stream_flags_t)(PA_STREAM_AUTO_TIMING_UPDATE | PA_STREAM_INTERPOLATE_TIMING | PA_STREAM_ADJUST_LATENCY);
+ 
+     int err = pa_stream_connect_record(ispa->stream,
+             instream->device->id,
+-- 
+2.21.0
+
