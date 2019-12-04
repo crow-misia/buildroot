@@ -1,0 +1,29 @@
+From bd4767238c79b985640a90e57671ffb692715a19 Mon Sep 17 00:00:00 2001
+From: Atsushi Eno <atsushieno@gmail.com>
+Date: Tue, 14 Aug 2018 16:20:58 +0800
+Subject: [PATCH] pulseaudio: remove call to write_callback() at
+ soundio_outstream_start().
+
+This should fix https://github.com/andrewrk/libsoundio/issues/173
+---
+ src/pulseaudio.c | 4 ----
+ 1 file changed, 4 deletions(-)
+
+diff --git a/src/pulseaudio.c b/src/pulseaudio.c
+index d594c3b..d8fd823 100644
+--- a/src/pulseaudio.c
++++ b/src/pulseaudio.c
+@@ -738,10 +738,6 @@ static int outstream_start_pa(struct SoundIoPrivate *si, struct SoundIoOutStream
+ 
+     pa_threaded_mainloop_lock(sipa->main_loop);
+ 
+-    ospa->write_byte_count = pa_stream_writable_size(ospa->stream);
+-    int frame_count = ospa->write_byte_count / outstream->bytes_per_frame;
+-    outstream->write_callback(outstream, 0, frame_count);
+-
+     pa_operation *op = pa_stream_cork(ospa->stream, false, NULL, NULL);
+     if (!op) {
+         pa_threaded_mainloop_unlock(sipa->main_loop);
+-- 
+2.21.0
+
