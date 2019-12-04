@@ -1,0 +1,25 @@
+From 29c922b855c5ae2e6c348175058b917ce85e39ae Mon Sep 17 00:00:00 2001
+From: Zenichi Amano <crow.misia@gmail.com>
+Date: Thu, 21 Nov 2019 21:12:17 +0900
+Subject: [PATCH] add cast for java13
+
+---
+ .../com/google/devtools/build/buildjar/VanillaJavaBuilder.java  | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/java_tools/buildjar/java/com/google/devtools/build/buildjar/VanillaJavaBuilder.java b/src/java_tools/buildjar/java/com/google/devtools/build/buildjar/VanillaJavaBuilder.java
+index 49b8ae8fbc..7723b72d50 100644
+--- a/src/java_tools/buildjar/java/com/google/devtools/build/buildjar/VanillaJavaBuilder.java
++++ b/src/java_tools/buildjar/java/com/google/devtools/build/buildjar/VanillaJavaBuilder.java
+@@ -79,7 +79,7 @@ public class VanillaJavaBuilder implements Closeable {
+   private FileSystem getJarFileSystem(Path sourceJar) throws IOException {
+     FileSystem fs = filesystems.get(sourceJar);
+     if (fs == null) {
+-      filesystems.put(sourceJar, fs = FileSystems.newFileSystem(sourceJar, null));
++      filesystems.put(sourceJar, fs = FileSystems.newFileSystem(sourceJar, (ClassLoader)null));
+     }
+     return fs;
+   }
+-- 
+2.21.0
+
