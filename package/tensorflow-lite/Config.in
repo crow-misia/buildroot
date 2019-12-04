@@ -1,0 +1,13 @@
+config BR2_PACKAGE_TENSORFLOW_LITE
+	bool "tensorflow-lite" 
+	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_4_9 # C++11
+	select BR2_HOST_PYTHON_NUMPY
+	select BR2_PACKAGE_ZLIB
+	help
+          TensorFlow Lite is the official solution for running
+          machine learning models on mobile and embedded devices.
+          It enables on-device machine learning inference with
+          low latency and a small binary size on Android, iOS,
+          and other operating systems.
+
+	  https://www.tensorflow.org/lite/
