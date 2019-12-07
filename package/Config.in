@@ -1463,6 +1463,11 @@ menu "Audio/Sound"
 	source "package/caps/Config.in"
 	source "package/fdk-aac/Config.in"
 	source "package/hts-engine/Config.in"
+if BR2_PACKAGE_HTS_ENGINE
+menu "HTS voice"
+	source "package/hts-voice-nitech/Config.in"
+endmenu
+endif
 	source "package/libao/Config.in"
 	source "package/libbroadvoice/Config.in"
 	source "package/libcanberra/Config.in"
