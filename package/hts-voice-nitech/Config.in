@@ -1,0 +1,4 @@
+config BR2_PACKAGE_HTS_VOICE_NITECH
+	bool "hts-voice-nitech"
+	depends on BR2_PACKAGE_HTS_ENGINE
+	default y
