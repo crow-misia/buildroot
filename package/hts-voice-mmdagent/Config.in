@@ -1,0 +1,61 @@
+config BR2_PACKAGE_HTS_VOICE_MMDAGENT
+	bool "hts-voice-mmdagent"
+	depends on BR2_PACKAGE_HTS_ENGINE
+	default y
+
+config BR2_PACKAGE_HTS_VOICE_MMDAGENT_MEI
+	bool
+	default n
+
+config BR2_PACKAGE_HTS_VOICE_MMDAGENT_TAKUMI
+	bool
+	default n
+
+if BR2_PACKAGE_HTS_VOICE_MMDAGENT
+
+config BR2_PACKAGE_HTS_VOICE_MMDAGENT_MEI_ANGRY
+	bool "hts-voice-mmdagent-mei-angry"
+	select BR2_PACKAGE_HTS_VOICE_MMDAGENT_MEI
+	default y
+
+config BR2_PACKAGE_HTS_VOICE_MMDAGENT_MEI_BASHFUL
+	bool "hts-voice-mmdagent-mei-bashful"
+	select BR2_PACKAGE_HTS_VOICE_MMDAGENT_MEI
+	default y
+
+config BR2_PACKAGE_HTS_VOICE_MMDAGENT_MEI_HAPPY
+	bool "hts-voice-mmdagent-mei-happy"
+	select BR2_PACKAGE_HTS_VOICE_MMDAGENT_MEI
+	default y
+
+config BR2_PACKAGE_HTS_VOICE_MMDAGENT_MEI_NORMAL
+	bool "hts-voice-mmdagent-mei-normal"
+	select BR2_PACKAGE_HTS_VOICE_MMDAGENT_MEI
+	default y
+
+config BR2_PACKAGE_HTS_VOICE_MMDAGENT_MEI_SAD
+	bool "hts-voice-mmdagent-mei-sad"
+	select BR2_PACKAGE_HTS_VOICE_MMDAGENT_MEI
+	default y
+
+config BR2_PACKAGE_HTS_VOICE_MMDAGENT_TAKUMI_ANGRY
+	bool "hts-voice-mmdagent-takumi-angry"
+	select BR2_PACKAGE_HTS_VOICE_MMDAGENT_TAKUMI
+	default y
+
+config BR2_PACKAGE_HTS_VOICE_MMDAGENT_TAKUMI_HAPPY
+	bool "hts-voice-mmdagent-takumi-happy"
+	select BR2_PACKAGE_HTS_VOICE_MMDAGENT_TAKUMI
+	default y
+
+config BR2_PACKAGE_HTS_VOICE_MMDAGENT_TAKUMI_NORMAL
+	bool "hts-voice-mmdagent-takumi-normal"
+	select BR2_PACKAGE_HTS_VOICE_MMDAGENT_TAKUMI
+	default y
+
+config BR2_PACKAGE_HTS_VOICE_MMDAGENT_TAKUMI_SAD
+	bool "hts-voice-mmdagent-takumi-sad"
+	select BR2_PACKAGE_HTS_VOICE_MMDAGENT_TAKUMI
+	default y
+
+endif
