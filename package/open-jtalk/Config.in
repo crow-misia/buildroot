@@ -1,0 +1,7 @@
+config BR2_PACKAGE_OPEN_JTALK
+	bool "open-jtalk"
+	select BR2_PACKAGE_HTS_ENGINE
+	help
+	  Open JTalk
+
+	  http://open-jtalk.sourceforge.net/
