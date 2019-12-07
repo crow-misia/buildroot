@@ -1306,6 +1306,7 @@ menu "Audio/Sound"
 if BR2_PACKAGE_HTS_ENGINE
 menu "HTS voice"
 	source "package/hts-voice-nitech/Config.in"
+	source "package/hts-voice-mmdagent/Config.in"
 endmenu
 endif
 	source "package/libao/Config.in"
