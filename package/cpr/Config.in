@@ -1,0 +1,6 @@
+config BR2_PACKAGE_CPR
+	bool "cpr"
+	depends on BR2_TOOLCHAIN_HAS_THREADS
+	select BR2_PACKAGE_LIBCURL
+	help
+	  C++ Requests is a simple wrapper around libcurl inspired by the excellent Python Requests project.
