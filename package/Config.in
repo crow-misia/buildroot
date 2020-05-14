@@ -2472,6 +2472,7 @@ endif
 	source "package/mrp/Config.in"
 	source "package/mstpd/Config.in"
 	source "package/mtr/Config.in"
+	source "package/nats-server/Config.in"
 	source "package/nbd/Config.in"
 	source "package/ncftp/Config.in"
 	source "package/ndisc6/Config.in"
