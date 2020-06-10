@@ -1,0 +1,214 @@
+From 99723c8be659b7c6ee0fd5d71188d796930e75d2 Mon Sep 17 00:00:00 2001
+From: Zenichi Amano <crow.misia@gmail.com>
+Date: Fri, 29 May 2020 23:05:35 +0900
+Subject: [PATCH] depend external library
+
+---
+ CMakeLists.txt               | 70 +++++++++++++++++-------------------
+ cmake/FindJSON.cmake         |  5 +++
+ cmake/FindSdpTransform.cmake |  8 +++++
+ cmake/FindWebRTC.cmake       | 22 ++++++++++++
+ include/Logger.hpp           |  1 +
+ 5 files changed, 69 insertions(+), 37 deletions(-)
+ create mode 100644 cmake/FindJSON.cmake
+ create mode 100644 cmake/FindSdpTransform.cmake
+ create mode 100644 cmake/FindWebRTC.cmake
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 3829f49..5bcdb0d 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -23,23 +23,18 @@ option(MEDIASOUPCLIENT_LOG_TRACE   "Enable MSC_LOG_TRACE (See Logger.hpp)" OFF)
+ option(MEDIASOUPCLIENT_LOG_DEV     "Enable MSC_LOG_DEV (See Logger.hpp)" OFF)
+ 
+ # Project configuration.
+-set(LIBWEBRTC_INCLUDE_PATH "" CACHE STRING "libwebrtc include path")
+-set(LIBWEBRTC_BINARY_PATH "" CACHE STRING "libwebrtc binary path")
+-
+-if(NOT LIBWEBRTC_INCLUDE_PATH)
+-	message(FATAL_ERROR "LIBWEBRTC_INCLUDE_PATH not provided")
+-endif()
+-
+-if(NOT LIBWEBRTC_BINARY_PATH)
+-	message(FATAL_ERROR "LIBWEBRTC_BINARY_PATH not provided")
+-endif()
++set(WEBRTC_INCLUDE_DIR "" CACHE PATH "libwebrtc include path")
++set(WEBRTC_LIBRARY_DIR "" CACHE PATH "libwebrtc binary path")
++set(WEBRTC_LIBRARY_NAME "webrtc" CACHE STRING "libwebrtc library name")
++set(JSON_ROOT_DIR "" CACHE PATH "json install path")
+ 
+ message("\n=========== libmediasoupclient Build Configuration ===========\n")
+ message(STATUS "MEDIASOUPCLIENT_BUILD_TESTS : " ${MEDIASOUPCLIENT_BUILD_TESTS})
+ message(STATUS "MEDIASOUPCLIENT_LOG_TRACE   : " ${MEDIASOUPCLIENT_LOG_TRACE})
+ message(STATUS "MEDIASOUPCLIENT_LOG_DEV     : " ${MEDIASOUPCLIENT_LOG_DEV})
+-message(STATUS "LIBWEBRTC_INCLUDE_PATH      : " ${LIBWEBRTC_INCLUDE_PATH})
+-message(STATUS "LIBWEBRTC_BINARY_PATH       : " ${LIBWEBRTC_BINARY_PATH})
++message(STATUS "WEBRTC_INCLUDE_DIR          : " ${WEBRTC_INCLUDE_DIR})
++message(STATUS "WEBRTC_LIBRARY_DIR          : " ${WEBRTC_LIBRARY_DIR})
++message(STATUS "JSON_ROOT_DIR               : " ${JSON_ROOT_DIR})
+ message("")
+ 
+ # GCC >= 4.9 is required due to std::regex use.
+@@ -49,12 +44,33 @@ if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
+ 	endif()
+ endif()
+ 
++list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
++
++find_package(WebRTC REQUIRED)
++find_package(JSON REQUIRED)
++find_package(SdpTransform REQUIRED)
++
+ if (${MEDIASOUPCLIENT_BUILD_TESTS})
+ 	add_subdirectory(test)
+ endif()
+ 
++set(HEADER_SDP_FILES
++	include/sdp/MediaSection.hpp
++	include/sdp/RemoteSdp.hpp
++	include/sdp/Utils.hpp
++)
++
+ set(HEADER_FILES
+ 	include/mediasoupclient.hpp
++	include/Consumer.hpp
++	include/Device.hpp
++	include/Handler.hpp
++	include/Logger.hpp
++	include/MediaSoupClientErrors.hpp
++	include/PeerConnection.hpp
++	include/Producer.hpp
++	include/Transport.hpp
++	include/Utils.hpp
+ )
+ 
+ set(
+@@ -72,24 +88,10 @@ set(
+ 	src/sdp/MediaSection.cpp
+ 	src/sdp/RemoteSdp.cpp
+ 	src/sdp/Utils.cpp
+-	include/Consumer.hpp
+-	include/Device.hpp
+-	include/Handler.hpp
+-	include/Logger.hpp
+-	include/MediaSoupClientErrors.hpp
+-	include/PeerConnection.hpp
+-	include/Producer.hpp
+-	include/Transport.hpp
+-	include/mediasoupclient.hpp
+-	include/ortc.hpp
+-	include/scalabilityMode.hpp
+-	include/sdp/MediaSection.hpp
+-	include/sdp/RemoteSdp.hpp
+-	include/sdp/Utils.hpp
+ )
+ 
+ # Create target.
+-add_library(${PROJECT_NAME} STATIC ${SOURCE_FILES})
++add_library(${PROJECT_NAME} STATIC ${SOURCE_FILES} ${HEADER_FILES})
+ 
+ if(${MEDIASOUPCLIENT_LOG_TRACE})
+ 	target_compile_definitions(${PROJECT_NAME}
+@@ -103,9 +105,6 @@ if(${MEDIASOUPCLIENT_LOG_DEV})
+ 	)
+ endif()
+ 
+-# Source Dependencies.
+-add_subdirectory(deps/libsdptransform "${CMAKE_CURRENT_BINARY_DIR}/libsdptransform")
+-
+ # Add some compile flags to our source files.
+ if(MSVC)
+ 	set_source_files_properties(${SOURCE_FILES}
+@@ -119,16 +118,12 @@ endif()
+ target_include_directories(${PROJECT_NAME} PRIVATE ${PROJECT_SOURCE_DIR}/include)
+ 
+ # Public (interface) headers from dependencies.
+-target_include_directories(${PROJECT_NAME} PUBLIC
+-	"${PROJECT_SOURCE_DIR}/deps/libsdptransform/include"
+-	"${LIBWEBRTC_INCLUDE_PATH}"
+-	"${LIBWEBRTC_INCLUDE_PATH}/third_party/abseil-cpp"
+-)
+ 
+ # Public (interface) dependencies.
+ target_link_libraries(${PROJECT_NAME} PUBLIC
+-	sdptransform
+-	${LIBWEBRTC_BINARY_PATH}/libwebrtc${CMAKE_STATIC_LIBRARY_SUFFIX}
++	WebRTC::WebRTC
++	SdpTransform::SdpTransform
++	JSON::JSON
+ )
+ 
+ # Compile definitions for libwebrtc.
+@@ -140,3 +135,4 @@ target_compile_definitions(${PROJECT_NAME} PUBLIC
+ 
+ install(TARGETS mediasoupclient DESTINATION lib)
+ install(FILES ${HEADER_FILES} DESTINATION include/mediasoupclient)
++install(FILES ${HEADER_SDP_FILES} DESTINATION include/mediasoupclient/sdp)
+diff --git a/cmake/FindJSON.cmake b/cmake/FindJSON.cmake
+new file mode 100644
+index 0000000..63e0dae
+--- /dev/null
++++ b/cmake/FindJSON.cmake
+@@ -0,0 +1,5 @@
++if (NOT TARGET JSON::JSON)
++  add_library(JSON::JSON INTERFACE IMPORTED)
++  set_target_properties(JSON::JSON PROPERTIES
++    INTERFACE_INCLUDE_DIRECTORIES "${JSON_ROOT_DIR}/include/nlohmann")
++endif()
+diff --git a/cmake/FindSdpTransform.cmake b/cmake/FindSdpTransform.cmake
+new file mode 100644
+index 0000000..a3ab5eb
+--- /dev/null
++++ b/cmake/FindSdpTransform.cmake
+@@ -0,0 +1,8 @@
++find_library(SDPTRANSFORM_LIBRARY NAMES sdptransform PATHS "${SDPTRANSFORM_ROOT_DIR}/lib")
++
++if (NOT TARGET SdpTransform::SdpTransform)
++  add_library(SdpTransform::SdpTransform UNKNOWN IMPORTED)
++  set_target_properties(SdpTransform::SdpTransform PROPERTIES
++    INTERFACE_INCLUDE_DIRECTORIES "${SDPTRANSFORM_ROOT_DIR}/include/sdptransform"
++    IMPORTED_LOCATION ${SDPTRANSFORM_LIBRARY})
++endif()
+diff --git a/cmake/FindWebRTC.cmake b/cmake/FindWebRTC.cmake
+new file mode 100644
+index 0000000..bb47ec3
+--- /dev/null
++++ b/cmake/FindWebRTC.cmake
+@@ -0,0 +1,22 @@
++find_path(WebRTC_INCLUDE_DIR NAMES api/peer_connection_interface.h PATHS "${WEBRTC_INCLUDE_DIR}")
++find_library(WebRTC_LIBRARY NAMES ${WEBRTC_LIBRARY_NAME} PATHS "${WEBRTC_LIBRARY_DIR}")
++
++include(FindPackageHandleStandardArgs)
++find_package_handle_standard_args(WebRTC DEFAULT_MSG WebRTC_LIBRARY WebRTC_INCLUDE_DIR)
++
++mark_as_advanced(WebRTC_INCLUDE_DIR WebRTC_LIBRARY)
++
++if(WebRTC_FOUND)
++  if(NOT TARGET WebRTC::WebRTC)
++    add_library(WebRTC::WebRTC UNKNOWN IMPORTED)
++
++    set(_DIRS
++      ${WebRTC_INCLUDE_DIR}
++      ${WebRTC_INCLUDE_DIR}/third_party/abseil-cpp
++      ${WebRTC_INCLUDE_DIR}/third_party/boringssl/src/include)
++
++    set_target_properties(WebRTC::WebRTC PROPERTIES
++      INTERFACE_INCLUDE_DIRECTORIES "${_DIRS}"
++      IMPORTED_LOCATION "${WebRTC_LIBRARY}")
++  endif()
++endif()
+diff --git a/include/Logger.hpp b/include/Logger.hpp
+index beb2cfa..bd08138 100644
+--- a/include/Logger.hpp
++++ b/include/Logger.hpp
+@@ -45,6 +45,7 @@
+ 
+ #include <cstdio>  // std::snprintf(), std::fprintf(), stdout, stderr
+ #include <cstdlib> // std::abort()
++#include <cstdint>
+ #include <cstring>
+ 
+ namespace mediasoupclient
+-- 
+2.26.2
+
