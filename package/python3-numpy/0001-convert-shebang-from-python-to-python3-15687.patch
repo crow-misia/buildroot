@@ -1,0 +1,567 @@
+From 583901a074dc65145d3d6136ba7dcd02634d680b Mon Sep 17 00:00:00 2001
+From: Changqing Li <changqing.li@windriver.com>
+Date: Wed, 4 Mar 2020 16:22:40 +0800
+Subject: [PATCH] convert shebang from python to python3 (#15687)
+
+Signed-off-by: Changqing Li <changqing.li@windriver.com>
+---
+ doc/DISTUTILS.rst.txt                                     | 2 +-
+ doc/cdoc/numpyfilter.py                                   | 2 +-
+ doc/postprocess.py                                        | 2 +-
+ doc/summarize.py                                          | 2 +-
+ numpy/distutils/conv_template.py                          | 2 +-
+ numpy/distutils/cpuinfo.py                                | 2 +-
+ numpy/distutils/from_template.py                          | 2 +-
+ numpy/distutils/setup.py                                  | 2 +-
+ numpy/distutils/system_info.py                            | 2 +-
+ numpy/f2py/__init__.py                                    | 2 +-
+ numpy/f2py/auxfuncs.py                                    | 2 +-
+ numpy/f2py/capi_maps.py                                   | 2 +-
+ numpy/f2py/cb_rules.py                                    | 2 +-
+ numpy/f2py/cfuncs.py                                      | 2 +-
+ numpy/f2py/common_rules.py                                | 2 +-
+ numpy/f2py/crackfortran.py                                | 2 +-
+ numpy/f2py/diagnose.py                                    | 2 +-
+ numpy/f2py/f2py2e.py                                      | 2 +-
+ numpy/f2py/f90mod_rules.py                                | 2 +-
+ numpy/f2py/func2subr.py                                   | 2 +-
+ numpy/f2py/rules.py                                       | 2 +-
+ numpy/f2py/setup.py                                       | 2 +-
+ numpy/f2py/use_rules.py                                   | 2 +-
+ numpy/linalg/lapack_lite/clapack_scrub.py                 | 2 +-
+ numpy/linalg/lapack_lite/make_lite.py                     | 2 +-
+ numpy/ma/bench.py                                         | 2 +-
+ numpy/ma/setup.py                                         | 2 +-
+ numpy/matrixlib/setup.py                                  | 2 +-
+ numpy/random/_examples/cython/extending.pyx               | 2 +-
+ numpy/random/_examples/cython/extending_distributions.pyx | 2 +-
+ numpy/setup.py                                            | 2 +-
+ numpy/testing/print_coercion_tables.py                    | 2 +-
+ numpy/testing/setup.py                                    | 2 +-
+ runtests.py                                               | 2 +-
+ setup.py                                                  | 2 +-
+ tools/c_coverage/c_coverage_report.py                     | 2 +-
+ tools/changelog.py                                        | 2 +-
+ tools/ci/push_docs_to_repo.py                             | 2 +-
+ tools/ci/test_all_newsfragments_used.py                   | 2 +-
+ tools/find_deprecated_escaped_characters.py               | 2 +-
+ tools/refguide_check.py                                   | 2 +-
+ tools/swig/test/setup.py                                  | 2 +-
+ tools/swig/test/testArray.py                              | 2 +-
+ tools/swig/test/testFarray.py                             | 2 +-
+ tools/swig/test/testFlat.py                               | 2 +-
+ tools/swig/test/testFortran.py                            | 2 +-
+ tools/swig/test/testMatrix.py                             | 2 +-
+ tools/swig/test/testSuperTensor.py                        | 2 +-
+ tools/swig/test/testTensor.py                             | 2 +-
+ tools/swig/test/testVector.py                             | 2 +-
+ 50 files changed, 50 insertions(+), 50 deletions(-)
+
+diff --git a/doc/DISTUTILS.rst.txt b/doc/DISTUTILS.rst.txt
+index 677398baa..2957bb907 100644
+--- a/doc/DISTUTILS.rst.txt
++++ b/doc/DISTUTILS.rst.txt
+@@ -59,7 +59,7 @@ SciPy pure Python package example
+ 
+ Below is an example of a minimal ``setup.py`` file for a pure SciPy package::
+ 
+-  #!/usr/bin/env python
++  #!/usr/bin/env python3
+   def configuration(parent_package='',top_path=None):
+       from numpy.distutils.misc_util import Configuration
+       config = Configuration('mypackage',parent_package,top_path)
+diff --git a/doc/cdoc/numpyfilter.py b/doc/cdoc/numpyfilter.py
+index 1c1b9c5ad..d3cfe18f0 100755
+--- a/doc/cdoc/numpyfilter.py
++++ b/doc/cdoc/numpyfilter.py
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/usr/bin/env python3
+ """
+ numpyfilter.py INPUTFILE
+ 
+diff --git a/doc/postprocess.py b/doc/postprocess.py
+index c7fbcc6e7..309161bc0 100755
+--- a/doc/postprocess.py
++++ b/doc/postprocess.py
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/usr/bin/env python3
+ """
+ %prog MODE FILES...
+ 
+diff --git a/doc/summarize.py b/doc/summarize.py
+index 5a3088267..edd260ec7 100755
+--- a/doc/summarize.py
++++ b/doc/summarize.py
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/usr/bin/env python3
+ """
+ summarize.py
+ 
+diff --git a/numpy/distutils/conv_template.py b/numpy/distutils/conv_template.py
+index ec5a84a68..d08015fdf 100644
+--- a/numpy/distutils/conv_template.py
++++ b/numpy/distutils/conv_template.py
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/usr/bin/env python3
+ """
+ takes templated file .xxx.src and produces .xxx file  where .xxx is
+ .i or .c or .h, using the following template rules
+diff --git a/numpy/distutils/cpuinfo.py b/numpy/distutils/cpuinfo.py
+index 7bcda256b..51ce3c129 100644
+--- a/numpy/distutils/cpuinfo.py
++++ b/numpy/distutils/cpuinfo.py
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/usr/bin/env python3
+ """
+ cpuinfo
+ 
+diff --git a/numpy/distutils/from_template.py b/numpy/distutils/from_template.py
+index b4dd05b5e..070b7d8b8 100644
+--- a/numpy/distutils/from_template.py
++++ b/numpy/distutils/from_template.py
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/usr/bin/env python3
+ """
+ 
+ process_file(filename)
+diff --git a/numpy/distutils/setup.py b/numpy/distutils/setup.py
+index 415d2adeb..69d35f5c2 100644
+--- a/numpy/distutils/setup.py
++++ b/numpy/distutils/setup.py
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/usr/bin/env python3
+ from __future__ import division, print_function
+ 
+ def configuration(parent_package='',top_path=None):
+diff --git a/numpy/distutils/system_info.py b/numpy/distutils/system_info.py
+index 11d7c5a0e..3a6a7b29d 100644
+--- a/numpy/distutils/system_info.py
++++ b/numpy/distutils/system_info.py
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/usr/bin/env python3
+ """
+ This file defines a set of system_info classes for getting
+ information about various resources (libraries, library directories,
+diff --git a/numpy/f2py/__init__.py b/numpy/f2py/__init__.py
+index b74874075..949bac0ff 100644
+--- a/numpy/f2py/__init__.py
++++ b/numpy/f2py/__init__.py
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/usr/bin/env python3
+ """Fortran to Python Interface Generator.
+ 
+ """
+diff --git a/numpy/f2py/auxfuncs.py b/numpy/f2py/auxfuncs.py
+index 31802621e..80b150655 100644
+--- a/numpy/f2py/auxfuncs.py
++++ b/numpy/f2py/auxfuncs.py
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/usr/bin/env python3
+ """
+ 
+ Auxiliary functions for f2py2e.
+diff --git a/numpy/f2py/capi_maps.py b/numpy/f2py/capi_maps.py
+index c362fb008..b64c0dccb 100644
+--- a/numpy/f2py/capi_maps.py
++++ b/numpy/f2py/capi_maps.py
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/usr/bin/env python3
+ """
+ 
+ Copyright 1999,2000 Pearu Peterson all rights reserved,
+diff --git a/numpy/f2py/cb_rules.py b/numpy/f2py/cb_rules.py
+index dc178078d..54e49f68e 100644
+--- a/numpy/f2py/cb_rules.py
++++ b/numpy/f2py/cb_rules.py
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/usr/bin/env python3
+ """
+ 
+ Build call-back mechanism for f2py2e.
+diff --git a/numpy/f2py/cfuncs.py b/numpy/f2py/cfuncs.py
+index 28b2c0670..0d90e56d6 100644
+--- a/numpy/f2py/cfuncs.py
++++ b/numpy/f2py/cfuncs.py
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/usr/bin/env python3
+ """
+ 
+ C declarations, CPP macros, and C functions for f2py2e.
+diff --git a/numpy/f2py/common_rules.py b/numpy/f2py/common_rules.py
+index 31aefcda9..90483e55b 100644
+--- a/numpy/f2py/common_rules.py
++++ b/numpy/f2py/common_rules.py
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/usr/bin/env python3
+ """
+ 
+ Build common block mechanism for f2py2e.
+diff --git a/numpy/f2py/crackfortran.py b/numpy/f2py/crackfortran.py
+index 09bab11bd..536ea6058 100755
+--- a/numpy/f2py/crackfortran.py
++++ b/numpy/f2py/crackfortran.py
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/usr/bin/env python3
+ """
+ crackfortran --- read fortran (77,90) code and extract declaration information.
+ 
+diff --git a/numpy/f2py/diagnose.py b/numpy/f2py/diagnose.py
+index 092368c82..21ee399f0 100644
+--- a/numpy/f2py/diagnose.py
++++ b/numpy/f2py/diagnose.py
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/usr/bin/env python3
+ from __future__ import division, absolute_import, print_function
+ 
+ import os
+diff --git a/numpy/f2py/f2py2e.py b/numpy/f2py/f2py2e.py
+index 9707d6f7d..71a049e41 100755
+--- a/numpy/f2py/f2py2e.py
++++ b/numpy/f2py/f2py2e.py
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/usr/bin/env python3
+ """
+ 
+ f2py2e - Fortran to Python C/API generator. 2nd Edition.
+diff --git a/numpy/f2py/f90mod_rules.py b/numpy/f2py/f90mod_rules.py
+index f4f1bf1a9..ddacc35d8 100644
+--- a/numpy/f2py/f90mod_rules.py
++++ b/numpy/f2py/f90mod_rules.py
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/usr/bin/env python3
+ """
+ 
+ Build F90 module support for f2py2e.
+diff --git a/numpy/f2py/func2subr.py b/numpy/f2py/func2subr.py
+index 8e18a3236..e9976f43c 100644
+--- a/numpy/f2py/func2subr.py
++++ b/numpy/f2py/func2subr.py
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/usr/bin/env python3
+ """
+ 
+ Rules for building C/API module with f2py2e.
+diff --git a/numpy/f2py/rules.py b/numpy/f2py/rules.py
+index 14d6dd8f2..6a4ad170a 100755
+--- a/numpy/f2py/rules.py
++++ b/numpy/f2py/rules.py
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/usr/bin/env python3
+ """
+ 
+ Rules for building C/API module with f2py2e.
+diff --git a/numpy/f2py/setup.py b/numpy/f2py/setup.py
+index 5e4d7cd56..6314c5af3 100644
+--- a/numpy/f2py/setup.py
++++ b/numpy/f2py/setup.py
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/usr/bin/env python3
+ """
+ setup.py for installing F2PY
+ 
+diff --git a/numpy/f2py/use_rules.py b/numpy/f2py/use_rules.py
+index 268c7e81b..f1b71e83c 100644
+--- a/numpy/f2py/use_rules.py
++++ b/numpy/f2py/use_rules.py
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/usr/bin/env python3
+ """
+ 
+ Build 'use others module data' mechanism for f2py2e.
+diff --git a/numpy/linalg/lapack_lite/clapack_scrub.py b/numpy/linalg/lapack_lite/clapack_scrub.py
+index c5a3279be..f3e7d25d2 100644
+--- a/numpy/linalg/lapack_lite/clapack_scrub.py
++++ b/numpy/linalg/lapack_lite/clapack_scrub.py
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/usr/bin/env python3
+ from __future__ import division, absolute_import, print_function
+
+ import sys, os
+diff --git a/numpy/linalg/lapack_lite/make_lite.py b/numpy/linalg/lapack_lite/make_lite.py
+index 7c2d110fa..23921acf4 100755
+--- a/numpy/linalg/lapack_lite/make_lite.py
++++ b/numpy/linalg/lapack_lite/make_lite.py
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/usr/bin/env python3
+ """
+ Usage: make_lite.py <wrapped_routines_file> <lapack_dir> <output_dir>
+ 
+diff --git a/numpy/ma/bench.py b/numpy/ma/bench.py
+index a1363d4d9..83cc6aea7 100644
+--- a/numpy/ma/bench.py
++++ b/numpy/ma/bench.py
+@@ -1,4 +1,4 @@
+-#! /usr/bin/env python
++#!/usr/bin/env python3
+ # -*- coding: utf-8 -*-
+ 
+ from __future__ import division, print_function
+diff --git a/numpy/ma/setup.py b/numpy/ma/setup.py
+index af1e419b4..144a961c2 100644
+--- a/numpy/ma/setup.py
++++ b/numpy/ma/setup.py
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/usr/bin/env python3
+ from __future__ import division, print_function
+ 
+ def configuration(parent_package='',top_path=None):
+diff --git a/numpy/matrixlib/setup.py b/numpy/matrixlib/setup.py
+index c4eee4be4..529d2a2eb 100644
+--- a/numpy/matrixlib/setup.py
++++ b/numpy/matrixlib/setup.py
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/usr/bin/env python3
+ from __future__ import division, print_function
+ 
+ def configuration(parent_package='', top_path=None):
+diff --git a/numpy/random/_examples/cython/extending.pyx b/numpy/random/_examples/cython/extending.pyx
+index 7a0dfe078..3a7f81aa0 100644
+--- a/numpy/random/_examples/cython/extending.pyx
++++ b/numpy/random/_examples/cython/extending.pyx
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/usr/bin/env python3
+ #cython: language_level=3
+ 
+ from libc.stdint cimport uint32_t
+diff --git a/numpy/random/_examples/cython/extending_distributions.pyx b/numpy/random/_examples/cython/extending_distributions.pyx
+index 1bef506ef..4da6a4b3a 100644
+--- a/numpy/random/_examples/cython/extending_distributions.pyx
++++ b/numpy/random/_examples/cython/extending_distributions.pyx
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/usr/bin/env python3
+ #cython: language_level=3
+ """
+ This file shows how the to use a BitGenerator to create a distribution.
+diff --git a/numpy/setup.py b/numpy/setup.py
+index 742de2cae..fb9b36b78 100644
+--- a/numpy/setup.py
++++ b/numpy/setup.py
+@@ -1,5 +1,5 @@
+-#!/usr/bin/env python
++#!/usr/bin/env python3
+ from __future__ import division, print_function
+ 
+ 
+ def configuration(parent_package='',top_path=None):
+diff --git a/numpy/testing/print_coercion_tables.py b/numpy/testing/print_coercion_tables.py
+index 84d46b59b..8024df128 100755
+--- a/numpy/testing/print_coercion_tables.py
++++ b/numpy/testing/print_coercion_tables.py
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/usr/bin/env python3
+ """Prints type-coercion tables for the built-in NumPy types
+ 
+ """
+diff --git a/numpy/testing/setup.py b/numpy/testing/setup.py
+index c061b688a..f4970991c 100755
+--- a/numpy/testing/setup.py
++++ b/numpy/testing/setup.py
+@@ -1,5 +1,5 @@
+-#!/usr/bin/env python
++#!/usr/bin/env python3
+ from __future__ import division, print_function
+ 
+ 
+ def configuration(parent_package='',top_path=None):
+diff --git a/runtests.py b/runtests.py
+index 8e1f2057a..e470f8a9d 100755
+--- a/runtests.py
++++ b/runtests.py
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/usr/bin/env python3
+ """
+ runtests.py [OPTIONS] [-- ARGS]
+ 
+diff --git a/setup.py b/setup.py
+index 0ab4ba669..a5aa1709f 100755
+--- a/setup.py
++++ b/setup.py
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/usr/bin/env python3
+ """ NumPy is the fundamental package for array computing with Python.
+ 
+ It provides:
+diff --git a/tools/c_coverage/c_coverage_report.py b/tools/c_coverage/c_coverage_report.py
+index 28425054f..6a71f1e73 100755
+--- a/tools/c_coverage/c_coverage_report.py
++++ b/tools/c_coverage/c_coverage_report.py
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/usr/bin/env python3
+ """
+ A script to create C code-coverage reports based on the output of
+ valgrind's callgrind tool.
+diff --git a/tools/changelog.py b/tools/changelog.py
+index 2a0c4da43..92f33af24 100755
+--- a/tools/changelog.py
++++ b/tools/changelog.py
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/usr/bin/env python3
+ # -*- encoding:utf-8 -*-
+ """
+ Script to generate contributor and pull request lists
+diff --git a/tools/ci/push_docs_to_repo.py b/tools/ci/push_docs_to_repo.py
+index a98966880..ae5305484 100755
+--- a/tools/ci/push_docs_to_repo.py
++++ b/tools/ci/push_docs_to_repo.py
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/usr/bin/env python3
+ 
+ import argparse
+ import subprocess
+diff --git a/tools/ci/test_all_newsfragments_used.py b/tools/ci/test_all_newsfragments_used.py
+index 6c4591fd8..c2e031549 100755
+--- a/tools/ci/test_all_newsfragments_used.py
++++ b/tools/ci/test_all_newsfragments_used.py
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/usr/bin/env python3
+ 
+ import sys
+ import toml
+diff --git a/tools/find_deprecated_escaped_characters.py b/tools/find_deprecated_escaped_characters.py
+index 401366bca..22efaae65 100644
+--- a/tools/find_deprecated_escaped_characters.py
++++ b/tools/find_deprecated_escaped_characters.py
+@@ -1,4 +1,4 @@
+-#! /usr/bin/env python
++#!/usr/bin/env python3
+ r"""
+ Look for escape sequences deprecated in Python 3.6.
+ 
+diff --git a/tools/refguide_check.py b/tools/refguide_check.py
+index cbde44092..5037b5efe 100644
+--- a/tools/refguide_check.py
++++ b/tools/refguide_check.py
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/usr/bin/env python3
+ """
+ refguide_check.py [OPTIONS] [-- ARGS]
+ 
+diff --git a/tools/swig/test/setup.py b/tools/swig/test/setup.py
+index 71b354089..71830fd2c 100755
+--- a/tools/swig/test/setup.py
++++ b/tools/swig/test/setup.py
+@@ -1,4 +1,4 @@
+-#! /usr/bin/env python
++#!/usr/bin/env python3
+ from __future__ import division, print_function
+
+ # System imports
+diff --git a/tools/swig/test/testArray.py b/tools/swig/test/testArray.py
+index f91ca7b30..627257622 100755
+--- a/tools/swig/test/testArray.py
++++ b/tools/swig/test/testArray.py
+@@ -1,4 +1,4 @@
+-#! /usr/bin/env python
++#!/usr/bin/env python3
+ from __future__ import division, absolute_import, print_function
+ 
+ # System imports
+diff --git a/tools/swig/test/testFarray.py b/tools/swig/test/testFarray.py
+index 67dace5b1..43a6003f4 100755
+--- a/tools/swig/test/testFarray.py
++++ b/tools/swig/test/testFarray.py
+@@ -1,4 +1,4 @@
+-#! /usr/bin/env python
++#!/usr/bin/env python3
+ from __future__ import division, absolute_import, print_function
+ 
+ # System imports
+diff --git a/tools/swig/test/testFlat.py b/tools/swig/test/testFlat.py
+index cdbdd0f4c..26e3332d3 100755
+--- a/tools/swig/test/testFlat.py
++++ b/tools/swig/test/testFlat.py
+@@ -1,4 +1,4 @@
+-#! /usr/bin/env python
++#!/usr/bin/env python3
+ from __future__ import division, absolute_import, print_function
+ 
+ # System imports
+diff --git a/tools/swig/test/testFortran.py b/tools/swig/test/testFortran.py
+index 9ba1f2a96..348355afc 100644
+--- a/tools/swig/test/testFortran.py
++++ b/tools/swig/test/testFortran.py
+@@ -1,4 +1,4 @@
+-#! /usr/bin/env python
++#!/usr/bin/env python3
+ from __future__ import division, absolute_import, print_function
+ 
+ # System imports
+diff --git a/tools/swig/test/testMatrix.py b/tools/swig/test/testMatrix.py
+index 815acf98e..814c0d578 100755
+--- a/tools/swig/test/testMatrix.py
++++ b/tools/swig/test/testMatrix.py
+@@ -1,4 +1,4 @@
+-#! /usr/bin/env python
++#!/usr/bin/env python3
+ from __future__ import division, absolute_import, print_function
+ 
+ # System imports
+diff --git a/tools/swig/test/testSuperTensor.py b/tools/swig/test/testSuperTensor.py
+index f6f33bd02..121c4a405 100644
+--- a/tools/swig/test/testSuperTensor.py
++++ b/tools/swig/test/testSuperTensor.py
+@@ -1,4 +1,4 @@
+-#! /usr/bin/env python
++#!/usr/bin/env python3
+ from __future__ import division, print_function
+ 
+ # System imports
+diff --git a/tools/swig/test/testTensor.py b/tools/swig/test/testTensor.py
+index 6fd4f578b..164ceb2d5 100755
+--- a/tools/swig/test/testTensor.py
++++ b/tools/swig/test/testTensor.py
+@@ -1,4 +1,4 @@
+-#! /usr/bin/env python
++#!/usr/bin/env python3
+ from __future__ import division, absolute_import, print_function
+ 
+ # System imports
+diff --git a/tools/swig/test/testVector.py b/tools/swig/test/testVector.py
+index 266cfc0af..1a663d1db 100755
+--- a/tools/swig/test/testVector.py
++++ b/tools/swig/test/testVector.py
+@@ -1,4 +1,4 @@
+-#! /usr/bin/env python
++#!/usr/bin/env python3
+ from __future__ import division, absolute_import, print_function
+ 
+ # System imports
+-- 
+2.26.2
+
