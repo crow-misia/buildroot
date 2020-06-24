@@ -4,73 +4,71 @@
 #
 ################################################################################
 
-TENSORFLOW_LITE_VERSION = v1.15.3
+TENSORFLOW_LITE_VERSION = 2.2.0
 TENSORFLOW_LITE_REPO_URL = https://github.com/tensorflow/tensorflow
-TENSORFLOW_LITE_SITE = $(call qstrip,$(TENSORFLOW_LITE_REPO_URL))
-TENSORFLOW_LITE_SITE_METHOD = git
-TENSORFLOW_LITE_SUBDIR = tensorflow/lite
-
+TENSORFLOW_LITE_SITE = $(call github,tensorflow,tensorflow,v$(TENSORFLOW_LITE_VERSION))
 TENSORFLOW_LITE_LICENSE = Apache-2.0
 TENSORFLOW_LITE_LICENSE_FILES = LICENSE
-
 TENSORFLOW_LITE_INSTALL_STAGING = YES
-
 TENSORFLOW_LITE_DEPENDENCIES = \
         toolchain \
-        host-python3
+	zlib \
+	host-python3 \
+	host-python3-numpy
 
-define TENSORFLOW_LITE_COPY_GIT
-	cp -rf $(TENSORFLOW_LITE_DL_DIR)/git/{.git,.gitignore} $(@D)
+
+ifeq ($(BR2_arm),y)
+# it also wants to know which FPU to use, but only has support for
+# vfp, vfpv3, vfpv3-d16, vfpv4, vfpv4-d16 and neon.
+ifeq ($(BR2_ARM_FPU_VFPV2),y)
+TENSORFLOW_LITE_ARM_FPU = vfp
+else ifeq ($(BR2_ARM_FPU_VFPV3),y)
+TENSORFLOW_LITE_ARM_FPU = vfpv3
+else ifeq ($(BR2_ARM_FPU_VFPV4),y)
+TENSORFLOW_LITE_ARM_FPU = vfpv4
+else ifeq ($(BR2_ARM_FPU_VFPV3D16),y)
+TENSORFLOW_LITE_ARM_FPU = vfpv3-d16
+else ifeq ($(BR2_ARM_FPU_VFPV4D16),y)
+TENSORFLOW_LITE_ARM_FPU = vfpv4-d16
+else ifeq ($(BR2_ARM_FPU_NEON),y)
+TENSORFLOW_LITE_ARM_FPU = neon
+endif
+endif
+
+TENSORFLOW_LITE_ARCH = $(call qstrip,$(BR2_ARCH))
+TENSORFLOW_LITE_GEN_DIR = $(@D)/tensorflow/lite/tools/make/gen/$(TARGET_OS)_$(TENSORFLOW_LITE_ARCH)
+
+TENSORFLOW_LITE_MAKE_OPTS = \
+	TARGET=$(TARGET_OS) \
+	TARGET_ARCH=$(TENSORFLOW_LITE_ARCH) \
+	CFLAGS="$(TARGET_CFLAGS) -fPIC" \
+	CXXFLAGS="$(TARGET_CXXFLAGS) -fPIC $(if $(TENSORFLOW_LITE_ARM_FPU),-mfpu=$(TENSORFLOW_LITE_ARM_FPU))"
+
+TENSORFLOW_LITE_CXXFLAGS += \
+	-DTF_COMPILE_LIBRARY \
+	-I$(@D) \
+	-I$(@D)/tensorflow/lite/tools/make/downloads/flatbuffers/include \
+	-I$(@D)/tensorflow/lite/tools/make/downloads/absl
+
+define TENSORFLOW_LITE_BUILD_CMDS
+        $(@D)/tensorflow/lite/tools/make/download_dependencies.sh
+	$(TARGET_MAKE_ENV) $(MAKE) $(TARGET_CONFIGURE_OPTS) $(TENSORFLOW_LITE_MAKE_OPTS) -C $(@D) -f $(@D)/tensorflow/lite/tools/make/Makefile
+	$(TARGET_CXX) -std=c++14 -c $(TENSORFLOW_LITE_CXXFLAGS) -o $(TENSORFLOW_LITE_GEN_DIR)/obj/tensorflow/lite/c/c_api.o $(@D)/tensorflow/lite/c/c_api.cc
+	$(TARGET_CXX) -std=c++14 -c $(TENSORFLOW_LITE_CXXFLAGS) -o $(TENSORFLOW_LITE_GEN_DIR)/obj/tensorflow/lite/c/c_api_experimental.o $(@D)/tensorflow/lite/c/c_api_experimental.cc 
+	$(TARGET_CXX) -shared -o $(TENSORFLOW_LITE_GEN_DIR)/lib/libtensorflowlite_c.so \
+		-fPIC \
+		$(TENSORFLOW_LITE_GEN_DIR)/obj/tensorflow/lite/c/c_api.o \
+		$(TENSORFLOW_LITE_GEN_DIR)/obj/tensorflow/lite/c/c_api_experimental.o \
+		-L$(TENSORFLOW_LITE_GEN_DIR)/lib -ltensorflow-lite
 endef
-TENSORFLOW_LITE_POST_EXTRACT_HOOKS += TENSORFLOW_LITE_COPY_GIT
-
-define TENSORFLOW_LITE_CONFIGURE_CMDS
-	mkdir -p $(@D)/third_party/toolchains/buildroot
-	cp -f package/tensorflow-lite/{BUILD,CROSSTOOL} $(@D)/third_party/toolchains/buildroot
-	sed -i -e 's#@TARGET_CROSS@#$(TARGET_CROSS)#' $(@D)/third_party/toolchains/buildroot/CROSSTOOL
-	sed -i -e 's#@TOOLCHAIN_ID@#$(shell basename $(realpath $(STAGING_DIR)/../))#' $(@D)/third_party/toolchains/buildroot/CROSSTOOL
-	sed -i -e 's#@GCC_VERSION@#$(GCC_VERSION)#' $(@D)/third_party/toolchains/buildroot/CROSSTOOL
-	sed -i -e 's#@HOST_DIR@#$(HOST_DIR)#' $(@D)/third_party/toolchains/buildroot/CROSSTOOL
-	cp -f package/tensorflow-lite/tf_configure.bazelrc $(@D)/.tf_configure.bazelrc
-	sed -i -e 's#@PYTHON_BIN@#$(HOST_DIR)/bin/python3#' $(@D)/.tf_configure.bazelrc
-	sed -i -e 's#@PYTHON_LIB@#$(HOST_DIR)/lib/python$(PYTHON3_VERSION_MAJOR)/site-packages#' $(@D)/.tf_configure.bazelrc
-endef
-
-TENSORFLOW_LITE_BUILD_OPTS += \
-	--verbose_failures \
-	-c opt \
-	--copt=-mfpu=neon-fp16 \
-	--cpu='armeabi-v7a' \
-	--crosstool_top='//third_party/toolchains/buildroot:toolchain' \
-	--host_crosstool_top='@bazel_tools//tools/cpp:toolchain' \
-	//tensorflow/lite:libtensorflowlite.so
-
-define TENSORFLOW_LITE_BUILD_C_API
-	$(TARGET_CXX) $(TARGET_CXXFLAGS) -fPIC $(TARGET_LDFLAGS) \
-		$(@D)/tensorflow/lite/experimental/c/c_api.cc \
-		$(@D)/tensorflow/lite/experimental/c/c_api_experimental.cc \
-		-I$(@D) \
-		-I$(@D)/bazel-genfiles \
-		-I$(@D)/bazel-tensorflow-lite-$(TENSORFLOW_LITE_VERSION)/external/flatbuffers/include \
-		-L$(@D)/bazel-bin/tensorflow/lite \
-		-ltensorflowlite \
-		-shared \
-		-o $(@D)/libtensorflowlite_c.so
-endef
-TENSORFLOW_LITE_POST_BUILD_HOOKS += TENSORFLOW_LITE_BUILD_C_API
 
 define TENSORFLOW_LITE_INSTALL_STAGING_CMDS
-	$(INSTALL) -D -m 0755 $(@D)/bazel-bin/tensorflow/lite/libtensorflowlite.so $(STAGING_DIR)/usr/lib/libtensorflowlite.so
-	$(INSTALL) -D -m 0755 $(@D)/libtensorflowlite_c.so $(STAGING_DIR)/usr/lib/libtensorflowlite_c.so
+	$(INSTALL) -m 0755 $(TENSORFLOW_LITE_GEN_DIR)/lib/libtensorflowlite_c.so $(STAGING_DIR)/usr/lib/
 	cd $(@D)                && find tensorflow/lite -follow -type f -name "*.h" -exec cp --parents {} $(STAGING_DIR)/usr/include \;
-	cd $(@D)/bazel-genfiles && find tensorflow      -follow -type f -name "*.h" -exec cp --parents {} $(STAGING_DIR)/usr/include \;
-	cd $(@D)/bazel-tensorflow-lite-$(TENSORFLOW_LITE_VERSION)/external/flatbuffers/include && find flatbuffers -follow -type f -name "*.h" -exec cp --parents {} $(STAGING_DIR)/usr/include \;
 endef
 
 define TENSORFLOW_LITE_INSTALL_TARGET_CMDS
-	$(INSTALL) -D -m 0755 $(@D)/bazel-bin/tensorflow/lite/libtensorflowlite.so $(TARGET_DIR)/usr/lib/libtensorflowlite.so
-	$(INSTALL) -D -m 0755 $(@D)/libtensorflowlite_c.so $(TARGET_DIR)/usr/lib/libtensorflowlite_c.so
+	$(INSTALL) -m 0755 $(@D)/tensorflow/lite/tools/make/gen/$(TARGET_OS)_$(BR2_ARCH)/lib/libtensorflowlite_c.so $(TARGET_DIR)/usr/lib/
 endef
 
-$(eval $(bazel-package))
-
+$(eval $(generic-package))
