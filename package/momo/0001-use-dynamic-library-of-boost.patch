@@ -1,0 +1,24 @@
+From 3d183aa54cf8e730002ff9dd6b31922a7edf3847 Mon Sep 17 00:00:00 2001
+From: Zenichi Amano <crow.misia@gmail.com>
+Date: Sun, 8 Mar 2020 16:52:21 +0900
+Subject: [PATCH] use dynamic library of boost
+
+---
+ CMakeLists.txt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index cb6529d..c14a832 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -257,7 +257,7 @@ project(momo C CXX)
+ 
+ list(APPEND MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
+ 
+-set(Boost_USE_STATIC_LIBS ON)
++set(Boost_USE_STATIC_LIBS OFF)
+ if ("${TARGET_OS}" STREQUAL "windows")
+   set(Boost_USE_STATIC_RUNTIME ON)
+ else()
+-- 
+2.25.1

@@ -1,0 +1,24 @@
+From 5be2bc63b0a2fc739e928274d7dfc1b91f2cdbf6 Mon Sep 17 00:00:00 2001
+From: Zenichi Amano <crow.misia@gmail.com>
+Date: Wed, 11 Mar 2020 22:28:05 +0900
+Subject: [PATCH] disable thumb
+
+---
+ CMakeLists.txt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index b7190dc..936c520 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -622,7 +622,7 @@ elseif (TARGET_OS STREQUAL "linux")
+       if (TARGET_ARCH_ARM STREQUAL "armv6")
+         target_compile_options(momo PRIVATE -mfloat-abi=hard -mcpu=arm1176jzf-s -mfpu=vfp)
+       else()
+-        target_compile_options(momo PRIVATE -mfloat-abi=hard -march=armv7-a -mtune=generic-armv7-a -mfpu=neon -mthumb)
++        target_compile_options(momo PRIVATE -mfloat-abi=hard -march=armv7-a -mtune=generic-armv7-a -mfpu=neon)
+       endif()
+ 
+       if (USE_MMAL_ENCODER)
+-- 
+2.25.1
