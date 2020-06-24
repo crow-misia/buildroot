@@ -1,0 +1,34 @@
+From d9e63deae58bd87a3f12cdcff3246808c90f536f Mon Sep 17 00:00:00 2001
+From: Zenichi Amano <crow.misia@gmail.com>
+Date: Wed, 11 Mar 2020 21:41:37 +0900
+Subject: [PATCH] not link unnecessary libraries when not use SDL2
+
+---
+ CMakeLists.txt | 10 ----------
+ 1 file changed, 10 deletions(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index a6a9ab9..3f0594f 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -516,18 +516,8 @@ elseif (TARGET_OS STREQUAL "linux")
+   set_target_properties(momo PROPERTIES POSITION_INDEPENDENT_CODE ON)
+   target_link_libraries(momo
+     PRIVATE
+-      X11
+-      Xau
+-      Xdmcp
+-      xcb
+-      plds4
+-      Xext
+       expat
+       dl
+-      nss3
+-      nssutil3
+-      plc4
+-      nspr4
+       rt
+       Threads::Threads
+   )
+-- 
+2.25.1

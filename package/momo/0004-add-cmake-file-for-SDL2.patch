@@ -1,0 +1,24 @@
+From 87e8ddc974fda1a369a452ebc44b93036fc12c31 Mon Sep 17 00:00:00 2001
+From: Zenichi Amano <crow.misia@gmail.com>
+Date: Wed, 11 Mar 2020 23:22:12 +0900
+Subject: [PATCH] add cmake file for SDL2
+
+---
+ cmake/FindSDL2.cmake | 6 ++++++
+ 1 file changed, 6 insertions(+)
+ create mode 100644 cmake/FindSDL2.cmake
+
+diff --git a/cmake/FindSDL2.cmake b/cmake/FindSDL2.cmake
+new file mode 100644
+index 0000000..8dfc8c8
+--- /dev/null
++++ b/cmake/FindSDL2.cmake
+@@ -0,0 +1,6 @@
++# 頑張って探したりせず、単純に SDL2_ROOT_DIR を見る
++if (NOT TARGET SDL2::SDL2)
++  add_library(SDL2::SDL2 INTERFACE IMPORTED)
++  set_target_properties(SDL2::SDL2 PROPERTIES
++    INTERFACE_INCLUDE_DIRECTORIES "${SDL2_ROOT_DIR}/include")
++endif()
+-- 
+2.25.1
