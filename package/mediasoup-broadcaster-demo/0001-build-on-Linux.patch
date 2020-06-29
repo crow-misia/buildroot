@@ -1,0 +1,49 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 039262a..fd58d05 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -40,6 +40,8 @@ if(APPLE)
+ 	)
+ endif(APPLE)
+ 
++find_package(Threads REQUIRED)
++
+ target_sources(${PROJECT_NAME} PRIVATE
+ 	src/Broadcaster.cpp
+ 	src/main.cpp
+@@ -66,5 +68,7 @@ target_link_libraries(${PROJECT_NAME} PUBLIC
+ 	${CPR_LIBRARIES}
+ 	mediasoupclient
+ 	webrtc_broadcaster
++	Threads::Threads
++	${CMAKE_DL_LIBS}
+ )
+ 
+diff --git a/deps/cpr/cpr/error.cpp b/deps/cpr/cpr/error.cpp
+index 713cb10..4143f93 100644
+--- a/deps/cpr/cpr/error.cpp
++++ b/deps/cpr/cpr/error.cpp
+@@ -38,8 +38,6 @@ ErrorCode Error::getErrorCodeForCurlError(std::int32_t curl_code) {
+             return ErrorCode::SSL_LOCAL_CERTIFICATE_ERROR;
+         case CURLE_SSL_CIPHER:
+             return ErrorCode::GENERIC_SSL_ERROR;
+-        case CURLE_SSL_CACERT:
+-            return ErrorCode::SSL_CACERT_ERROR;
+         case CURLE_USE_SSL_FAILED:
+             return ErrorCode::GENERIC_SSL_ERROR;
+         case CURLE_SSL_ENGINE_INITFAILED:
+diff --git a/deps/libmediasoupclient/include/Logger.hpp b/deps/libmediasoupclient/include/Logger.hpp
+index beb2cfa..bd08138 100644
+--- a/deps/libmediasoupclient/include/Logger.hpp
++++ b/deps/libmediasoupclient/include/Logger.hpp
+@@ -45,6 +45,7 @@
+ 
+ #include <cstdio>  // std::snprintf(), std::fprintf(), stdout, stderr
+ #include <cstdlib> // std::abort()
++#include <cstdint>
+ #include <cstring>
+ 
+ namespace mediasoupclient
+-- 
+2.26.2
+

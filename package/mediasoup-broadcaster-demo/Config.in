@@ -1,0 +1,9 @@
+config BR2_PACKAGE_MEDIASOUP_BROADCASTER_DEMO
+	bool "mediasoup-broadcaster-demo"
+	depends on BR2_TOOLCHAIN_HAS_THREADS
+	select BR2_PACKAGE_LIBMEDIASOUPCLIENT
+	select BR2_PACKAGE_CPR
+	select BR2_PACKAGE_LIBCURL
+	select BR2_PACKAGE_JSON_FOR_MODERN_CPP
+	help
+	  C++ client side library for building mediasoup based applications built on top of Google's libwebrtc C++ library
