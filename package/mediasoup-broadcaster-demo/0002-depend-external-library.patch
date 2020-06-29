@@ -1,0 +1,182 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index fd58d05..16ad4a2 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -10,6 +10,11 @@ set(broadcaster_VERSION_MINOR 1)
+ set(CMAKE_CXX_STANDARD 14)
+ set(CMAKE_CXX_STANDARD_REQUIRED ON)
+ 
++set(WEBRTC_INCLUDE_DIR "" CACHE PATH "libwebrtc include path")
++set(WEBRTC_LIBRARY_DIR "" CACHE PATH "libwebrtc binary path")
++set(WEBRTC_LIBRARY_NAME "webrtc" CACHE STRING "libwebrtc library name")
++set(CPR_ROOT_DIR "" CACHE PATH "cpr install path")
++
+ # Add some compile flags to our source files.
+ set_source_files_properties(${SOURCE_FILES}
+ 	PROPERTIES COMPILE_FLAGS -Wall -Wextra -Wpedantic)
+@@ -17,6 +22,8 @@ set_source_files_properties(${SOURCE_FILES}
+ # Create target.
+ add_executable(${PROJECT_NAME} ${SOURCES})
+ 
++list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
++
+ # Extra libs required in order to use Apple media devices.
+ if(APPLE)
+ 	find_library(APPLICATION_SERVICES ApplicationServices)
+@@ -40,6 +47,12 @@ if(APPLE)
+ 	)
+ endif(APPLE)
+ 
++find_package(SdpTransform REQUIRED)
++find_package(MediasoupClient REQUIRED)
++find_package(WebRTC REQUIRED)
++find_package(JSON REQUIRED)
++find_package(CPR REQUIRED)
++find_package(CURL REQUIRED)
+ find_package(Threads REQUIRED)
+ 
+ target_sources(${PROJECT_NAME} PRIVATE
+@@ -52,23 +65,31 @@ target_sources(${PROJECT_NAME} PRIVATE
+ target_include_directories(${PROJECT_NAME} PRIVATE ${PROJECT_SOURCE_DIR}/include)
+ 
+ # Source Dependencies.
+-add_subdirectory(deps/cpr "${CMAKE_CURRENT_BINARY_DIR}/cpr")
+-add_subdirectory(deps/libmediasoupclient "${CMAKE_CURRENT_BINARY_DIR}/libmediasoupclient")
+ add_subdirectory(deps/libwebrtc "${CMAKE_CURRENT_BINARY_DIR}/libwebrtc")
+ 
+ # Public (interface) headers from dependencies.
+ target_include_directories(${PROJECT_NAME} PUBLIC
+-	${CPR_INCLUDE_DIRS}
+-	"${PROJECT_SOURCE_DIR}/deps/libmediasoupclient/include"
+ 	"${PROJECT_SOURCE_DIR}/deps/libwebrtc"
+ )
+ 
+ # Public (interface) dependencies.
+ target_link_libraries(${PROJECT_NAME} PUBLIC
+-	${CPR_LIBRARIES}
+-	mediasoupclient
++	WebRTC::WebRTC
+ 	webrtc_broadcaster
+-	Threads::Threads
++	MediasoupClient::MediasoupClient
++	SdpTransform::SdpTransform
++	JSON::JSON
++	CPR::CPR
++	CURL::libcurl
+ 	${CMAKE_DL_LIBS}
++	${CMAKE_THREAD_LIBS_INIT}
++)
++
++# Compile definitions for libwebrtc.
++target_compile_definitions(${PROJECT_NAME} PUBLIC
++        $<$<NOT:$<PLATFORM_ID:Windows>>:WEBRTC_POSIX>
++        $<$<PLATFORM_ID:Windows>:WEBRTC_WIN>
++        $<$<PLATFORM_ID:Darwin>:WEBRTC_MAC>
+ )
+ 
++install(TARGETS ${PROJECT_NAME} DESTINATION bin)
+diff --git a/cmake/FindCPR.cmake b/cmake/FindCPR.cmake
+new file mode 100644
+index 0000000..9b53262
+--- /dev/null
++++ b/cmake/FindCPR.cmake
+@@ -0,0 +1,9 @@
++find_library(CPR_LIBRARY NAMES cpr PATHS "${CPR_ROOT_DIR}/lib")
++
++if (NOT TARGET CPR::CPR)
++  add_library(CPR::CPR STATIC IMPORTED)
++  set_target_properties(CPR::CPR PROPERTIES
++    INTERFACE_INCLUDE_DIRECTORIES "${CPR_ROOT_DIR}/include/cpr"
++    IMPORTED_LOCATION ${CPR_LIBRARY})
++endif()
++
+diff --git a/cmake/FindJSON.cmake b/cmake/FindJSON.cmake
+new file mode 100644
+index 0000000..63e0dae
+--- /dev/null
++++ b/cmake/FindJSON.cmake
+@@ -0,0 +1,5 @@
++if (NOT TARGET JSON::JSON)
++  add_library(JSON::JSON INTERFACE IMPORTED)
++  set_target_properties(JSON::JSON PROPERTIES
++    INTERFACE_INCLUDE_DIRECTORIES "${JSON_ROOT_DIR}/include/nlohmann")
++endif()
+diff --git a/cmake/FindMediasoupClient.cmake b/cmake/FindMediasoupClient.cmake
+new file mode 100644
+index 0000000..4567d9c
+--- /dev/null
++++ b/cmake/FindMediasoupClient.cmake
+@@ -0,0 +1,9 @@
++find_library(MEDIASOUPCLIENT_LIBRARY NAMES mediasoupclient PATHS "${MEDIASOUPCLIENT_ROOT_DIR}/lib")
++
++if (NOT TARGET MediasoupClient::MediasoupClient)
++  add_library(MediasoupClient::MediasoupClient STATIC IMPORTED)
++  set_target_properties(MediasoupClient::MediasoupClient PROPERTIES
++    INTERFACE_INCLUDE_DIRECTORIES "${MEDIASOUPCLIENT_ROOT_DIR}/include/mediasoupclient"
++    IMPORTED_LOCATION ${MEDIASOUPCLIENT_LIBRARY})
++endif()
++
+diff --git a/cmake/FindSdpTransform.cmake b/cmake/FindSdpTransform.cmake
+new file mode 100644
+index 0000000..3787b83
+--- /dev/null
++++ b/cmake/FindSdpTransform.cmake
+@@ -0,0 +1,8 @@
++find_library(SDPTRANSFORM_LIBRARY NAMES sdptransform PATHS "${SDPTRANSFORM_ROOT_DIR}/lib")
++
++if (NOT TARGET SdpTransform::SdpTransform)
++  add_library(SdpTransform::SdpTransform STATIC IMPORTED)
++  set_target_properties(SdpTransform::SdpTransform PROPERTIES
++    INTERFACE_INCLUDE_DIRECTORIES "${SDPTRANSFORM_ROOT_DIR}/include/sdptransform"
++    IMPORTED_LOCATION ${SDPTRANSFORM_LIBRARY})
++endif()
+diff --git a/cmake/FindWebRTC.cmake b/cmake/FindWebRTC.cmake
+new file mode 100644
+index 0000000..b99c333
+--- /dev/null
++++ b/cmake/FindWebRTC.cmake
+@@ -0,0 +1,21 @@
++find_path(WebRTC_INCLUDE_DIR NAMES api/peer_connection_interface.h PATHS "${WEBRTC_INCLUDE_DIR}")
++find_library(WebRTC_LIBRARY NAMES ${WEBRTC_LIBRARY_NAME} PATHS "${WEBRTC_LIBRARY_DIR}")
++
++include(FindPackageHandleStandardArgs)
++find_package_handle_standard_args(WebRTC DEFAULT_MSG WebRTC_LIBRARY WebRTC_INCLUDE_DIR)
++
++mark_as_advanced(WebRTC_INCLUDE_DIR WebRTC_LIBRARY)
++
++if(WebRTC_FOUND)
++  if(NOT TARGET WebRTC::WebRTC)
++    add_library(WebRTC::WebRTC STATIC IMPORTED)
++
++    set(_DIRS
++      ${WebRTC_INCLUDE_DIR}
++      ${WebRTC_INCLUDE_DIR}/third_party/abseil-cpp)
++
++    set_target_properties(WebRTC::WebRTC PROPERTIES
++      INTERFACE_INCLUDE_DIRECTORIES "${_DIRS}"
++      IMPORTED_LOCATION "${WebRTC_LIBRARY}")
++  endif()
++endif()
+diff --git a/deps/libwebrtc/CMakeLists.txt b/deps/libwebrtc/CMakeLists.txt
+index f4374a4..1f4bc99 100644
+--- a/deps/libwebrtc/CMakeLists.txt
++++ b/deps/libwebrtc/CMakeLists.txt
+@@ -19,6 +19,8 @@ if(APPLE)
+ 	)
+ endif(APPLE)
+
++find_package(WebRTC REQUIRED)
++
+ # Create target.
+ add_library(webrtc_broadcaster STATIC ${SOURCE_FILES})
+
+@@ -26,9 +28,8 @@ add_library(webrtc_broadcaster STATIC ${
+ target_include_directories(webrtc_broadcaster PRIVATE ${PROJECT_SOURCE_DIR}/deps/libwebrtc)
+
+ # Public (interface) headers from dependencies.
+-target_include_directories(webrtc_broadcaster PUBLIC
+-	"${LIBWEBRTC_INCLUDE_PATH}"
+-	"${LIBWEBRTC_INCLUDE_PATH}/third_party/abseil-cpp"
++target_link_libraries(webrtc_broadcaster PUBLIC
++	WebRTC::WebRTC
+ )
