@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-MOMO_VERSION = ceda20f25fb9708c84bc99286b756e8a553b41ce
+MOMO_VERSION = 7045cdcafccc31f5d2a5a66cbba9b37defd1daf8
 MOMO_SITE = $(call github,shiguredo,momo,$(MOMO_VERSION))
 MOMO_LICENSE = Apache-2.0
 MOMO_LICENSE_FILES = LICENSE
