@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-LIBWEBRTC_VERSION = 2bcd4837dd5eeed98523344d437eb0b7e4f441ba
+LIBWEBRTC_VERSION = ba48fa5d2cc2107a52f14ff9c245d1fead0f2fa5
 LIBWEBRTC_SOURCE =
 LIBWEBRTC_LICENSE = BSD-3-Clause
 LIBWEBRTC_LICENSE_FILES = src/LICENSE src/PATENTS
