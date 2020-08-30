@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-DEPOT_TOOLS_VERSION = 95099f475463caa66801dd1b22ee851fe8bc05be
+DEPOT_TOOLS_VERSION = 6c484875cdcbfeba43a4fae0106a1be8ca65eff1
 DEPOT_TOOLS_SITE = https://chromium.googlesource.com/chromium/tools/depot_tools.git
 DEPOT_TOOLS_SITE_METHOD = git
 
