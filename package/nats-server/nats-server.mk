@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-NATS_SERVER_VERSION = 2.1.7
+NATS_SERVER_VERSION = 2.1.8
 NATS_SERVER_SITE = $(call github,nats-io,nats-server,v$(NATS_SERVER_VERSION))
 NATS_SERVER_LICENSE = Apache-2.0
 NATS_SERVER_LICENSE_FILES = LICENSE
