@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-LIBWEBRTC_VERSION = ba48fa5d2cc2107a52f14ff9c245d1fead0f2fa5
+LIBWEBRTC_VERSION = 1f8862eff854305fe6ee27a375d297f1a3b5b1ce
 LIBWEBRTC_SOURCE =
 LIBWEBRTC_LICENSE = BSD-3-Clause
 LIBWEBRTC_LICENSE_FILES = src/LICENSE src/PATENTS
@@ -68,7 +68,7 @@ endif
 define LIBWEBRTC_BUILD_CMDS
 	export PATH="$(LIBWEBRTC_PATH)" && \
 	cd $(@D)/src && \
-	gn gen $(@D)/out --args="$(LIBWEBRTC_CC_WRAPPER) target_os=\"linux\" target_cpu=\"$(call qstrip,$(BR2_ARCH))\" is_debug=false treat_warnings_as_errors=false rtc_use_h264=false rtc_use_x11=false rtc_include_tests=false rtc_build_examples=false is_desktop_linux=false rtc_build_json=true strip_debug_info=true use_rtti=true use_custom_libcxx=false use_custom_libcxx_for_host=false use_ozone=true" && \
+	gn gen $(@D)/out --args="$(LIBWEBRTC_CC_WRAPPER) target_os=\"linux\" target_cpu=\"$(call qstrip,$(BR2_ARCH))\" is_debug=false treat_warnings_as_errors=false rtc_use_h264=false rtc_use_x11=false rtc_include_tests=false rtc_build_examples=false rtc_use_pipewire=false rtc_build_json=true strip_debug_info=true use_rtti=true use_custom_libcxx=false use_custom_libcxx_for_host=false use_ozone=true" && \
 	ninja -C $(@D)/out
 endef
 
