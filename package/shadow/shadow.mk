@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-SHADOW_VERSION = 4.14.3
+SHADOW_VERSION = 4.14.5
 SHADOW_SITE = https://github.com/shadow-maint/shadow/releases/download/$(SHADOW_VERSION)
 SHADOW_SOURCE = shadow-$(SHADOW_VERSION).tar.xz
 SHADOW_LICENSE = BSD-3-Clause
@@ -86,6 +86,10 @@ SHADOW_CONF_OPTS += --with-selinux
 SHADOW_DEPENDENCIES += libselinux libsemanage
 else
 SHADOW_CONF_OPTS += --without-selinux
+endif
+
+ifeq ($(BR2_PACKAGE_LIBXCRYPT),y)
+SHADOW_DEPENDENCIES += libxcrypt
 endif
 
 # linux-pam is also used without account-tools-setuid enabled
